@@ -1,0 +1,38 @@
+{
+    "h": {
+        "value": 6.62607e-34,
+        "comment": "Planck constant [J.s]"
+    },
+    "h_bar": {
+        "value": 1.05457e-34,
+        "comment": "Planck constant [J.s]"
+    },
+    "c": {
+        "value": 29979000000.0,
+        "comment": "Speed of light [cm.s]"
+    },
+    "k": {
+        "value": 1.380649e-16,
+        "comment": "Boltzmann constant [erg/K]"
+    },
+    "k_": {
+        "value": 0.695035,
+        "comment": "Boltzmann constant [cm^-1/K]"
+    },
+    "hc/k": {
+        "value": 1.44,
+        "comment": "hc/k [K/cm-1]"
+    },
+    "R": {
+        "value": 8.314,
+        "comment": "Ideal gas constant [J/K/mol]"
+    },
+    "Const_D": {
+        "value": 7.162e-7,
+        "comment": "=2*(R*2*ln(2)*1000)**0.5/c. For the calculation of Doppler broadening linewidth"
+    },
+    "Const_N": {
+        "value": 0.724,
+        "comment": "*1e22 [molecules/cm^3]=1e5[Pa]*10/k[erg/K] in molecules/cm^3. A factor of 1e22 is taken out since it cancels out with that from Const_Raman"
+    }
+}

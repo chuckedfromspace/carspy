@@ -1,0 +1,107 @@
+{
+    "N2": {
+        "we": {
+            "value": 2358.518,
+            "comment": "CARSFT/NRC"
+        },
+        "wx": {
+            "value": 14.2935,
+            "comment": "CARSFT/NRC"
+        },
+        "wy": {
+            "value": -0.00592949,
+            "comment": "CARSFT/NRC"
+        },
+        "wz": {
+            "value": -0.00024,
+            "comment": "CARSFT/NRC"
+        },
+        "Be": {
+            "value": 1.99826,
+            "comment": "CARSFT/NRC"
+        },
+        "De": {
+            "value": 5.774e-06,
+            "comment": "CARSFT/NRC"
+        },
+        "alpha_e": {
+            "value": 0.0173035,
+            "comment": "CARSFT/NRC"
+        },
+        "beta_e": {
+            "value": 1.55e-08,
+            "comment": "CARSFT/NRC"
+        },
+        "gamma_e": {
+            "value": -3.1536099e-05,
+            "comment": "CARSFT/NRC"
+        },
+        "H0": {
+            "value": 3e-12,
+            "comment": "CARSFT"
+        },
+        "He": {
+            "value": 1.8e-12,
+            "comment": "CARSFT"
+        },
+        "v0": {
+            "value": 2330.7,
+            "comment": "Harmonic oscillator frequency [cm^(-1)], from Eckbreth p222"
+        },
+        "mu": {
+            "value": 0.31,
+            "comment": "=GAMMA/GAMMA_p/Re, a correction factor for O- and S-branches following Eq.(9-10) in Farrow et al., Appl. Opt., vol.21, No.17, 1982."
+        },
+        "MW": {
+            "value": 28.013,
+            "comment": "[Da]"
+        },
+        "m_reduced": {
+            "value": 7.0015,
+            "comment": "[Da]"
+        },
+        "AG": {
+            "value": 1.166,
+            "comment": "CARSFT, =GAMMA_p/ALPHA_p, following Eq.(12) in Farrow et al., Appl. Opt., vol.21, No.17, 1982."
+        },
+        "AC1": {
+            "value": 2.4158e-12,
+            "comment": "CARSFT, ALPHA_P/(2*pi*c*v0*m_reduced)^0.5, ALPHA_p in Bohr unit"
+        },
+        "GAMMA": {
+            "value": 4.764,
+            "comment": "The anisotropy component of the polarizability, [cm^3/Bohr radius^3]"
+        },
+        "Re": {
+            "value": 2.074,
+            "comment": "Internuclear distance, [Bohr radius]"
+        },
+        "GAMMA_p": {
+            "value": 2.066e-16,
+            "comment": "NRC, ==7.38 cm^3/Bohr radius^2"
+        },
+        "ALPHA_p": {
+            "value": 1.772e-16,
+            "comment": "NRC, ==6.33 cm^3/Bohr radius^2"
+        },
+        "Const_Osc": {
+            "value": 195853800.0,
+            "comment": "Equivalent of CONST in NRC, =1/(2*pi*c*v0*m_reduced)"
+        },
+        "Const_Raman": {
+            "value": 0.24158,
+            "comment": "*1e-11. =ALPHA_p*(Const_Osc)^0.5, equivalent of AC1 from CARSFT"
+        },
+        "G/A": {
+            "value": 1.166,
+            "comment": "Equivalent of AG from CARSFT"
+        },
+        "NOTES": {
+            "1": "mu: based on the values from NRC, 4.764(GAMMA)/2.074(Re)/(7.38(GAMMA_p)=0.31. The given GAMMA_p [cm^2] must be converted to Bohr unit by dividing (0.52918e-8)**2. GAMMA is in this equation has the unit of cm^3. GAMMA_p is then in cm^2",
+            "2": "AC1: based on the values from NRC, 1.772e-16(ALPHA_p)*Const_Osc**0.5 = 0.248e-11",
+            "3": "Const_Osc: =1/(2*pi*c*v0*m_reduced), where m_reduced needs to be converted into [g]",
+            "4": "Const_Raman: Raman cross-section constant=ALPHA_p/(Const_Osc)^0.5, where ALPHA_p is in [cm]. A factor of 1e-11 is taken out as it cancels out with Const_N when squared",
+            "5": "Many of the listed constants are for reference. Only Const_Raman and G/A are used to compute transition amplitude"
+        }
+    }
+}
