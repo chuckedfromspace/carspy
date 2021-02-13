@@ -31,22 +31,23 @@ Therefore, I plan to rewrite the important modules (spectrum synthesis and least
 
 **NOTE**: Nitrogen is currently the only species implemented/tested in ``carspy``. Other common species will be added in the future (or can be readily introduced via customization).
 
+
 Features
 --------
 
 * CARSpy (stands for **C**\oherent **A**\nti-Stokes **R**\aman **S**\pectrosco\ **py**\):
 
-.. image:: https://github.com/chuckedfromspace/carspy/blob/main/assets/carspy_struct.png
-    :width: 100%
-    :align: center
-    :alt: carspy structure
+.. image:: https://raw.githubusercontent.com/chuckedfromspace/carspy/main/assets/carspy_struct.png
+        :width: 100%
+        :align: center
+        :alt: carspy structure
 
 * The CARS model:
 
-.. image:: https://github.com/chuckedfromspace/carspy/blob/main/assets/cars_model.png
-    :width: 100%
-    :align: center
-    :alt: cars model
+.. image:: https://raw.githubusercontent.com/chuckedfromspace/carspy/main/assets/cars_model.png
+        :width: 100%
+        :align: center
+        :alt: cars model
 
 Highlights
 ----------
@@ -57,17 +58,15 @@ Highlights
 Comparisons with CARSFT
 -----------------------
 
-.. figure:: https://github.com/chuckedfromspace/carspy/blob/main/assets/vs_CARSFT_01.jpeg
-    :width: 50%
-    :align: center
+.. figure:: https://raw.githubusercontent.com/chuckedfromspace/carspy/main/assets/vs_CARSFT_01.jpeg
+    :width: 70%
     :alt: vs_CARSFT_01
     :figclass: align-center
 
     Figure 1 Synthesized CARS spectra in N2 at 1 atm, 2400 K, with a pump linewidth of 0.5 cm-1, using Voigt lineshape and cross-coherence convolution.
 
-.. figure:: https://github.com/chuckedfromspace/carspy/blob/main/assets/vs_CARSFT_02.jpeg
-    :width: 50%
-    :align: center
+.. figure:: https://raw.githubusercontent.com/chuckedfromspace/carspy/main/assets/vs_CARSFT_02.jpeg
+    :width: 70%
     :alt: vs_CARSFT_02
     :figclass: align-center
 
