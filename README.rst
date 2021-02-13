@@ -44,7 +44,7 @@ Features
 
 * CARSpy:
 
-.. image:: https://github.com/chuckedfromspace/carspy/blob/main/assets/carspy.png
+.. image:: https://github.com/chuckedfromspace/carspy/blob/main/assets/carspy_struct.png
     :width: 100%
     :align: center
     :alt: carspy structure
