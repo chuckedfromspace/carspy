@@ -1,11 +1,3 @@
-.. |ss| raw:: html
-
-    <strike>
-
-.. |se| raw:: html
-
-    </strike>
-
 ======
 CARSpy
 ======
@@ -42,7 +34,7 @@ Therefore, I plan to rewrite the important modules (spectrum synthesis and least
 Features
 --------
 
-* CARSpy:
+* CARSpy (stands for **C**\oherent **A**\nti-Stokes **R**\aman **S**\pectrosco\ **py**\):
 
 .. image:: https://github.com/chuckedfromspace/carspy/blob/main/assets/carspy_struct.png
     :width: 100%
@@ -86,13 +78,13 @@ Roadmap
 
 The above features currently present in the draft code will be gradually improved and included in the ``main`` branch. Here is a tentative plan:
 
-1. |SS| Module for synthesizing CARS spectra |SE|
-2. Module for least-square fit (with ``lmfit``)
-3. Multiprocessing
-4. Docs
-5. Tutorials
-6. Other common diatomic species
-7. Dualpump/Wide CARS
+1. (Implemented) Module for synthesizing CARS spectra (optional with ``cantera``)
+2. (Short-term) Module for least-square fit (with ``lmfit``)
+3. (Mid-term) Multiprocessing
+4. (Mid-term) Docs
+5. (Mid-term) Tutorials
+6. (Long-term) Other common diatomic species
+7. (Long-term) Dualpump/Wide CARS
 
 Citation
 --------
