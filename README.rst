@@ -5,7 +5,7 @@ CARSpy
 .. image:: https://img.shields.io/pypi/v/carspy.svg
         :target: https://pypi.python.org/pypi/carspy
 
-.. image:: https://img.shields.io/travis/chuckedfromspace/carspy.svg
+.. image:: https://travis-ci.com/chuckedfromspace/carspy.svg
         :target: https://travis-ci.com/chuckedfromspace/carspy
 
 .. image:: https://readthedocs.org/projects/carspy/badge/?version=latest
