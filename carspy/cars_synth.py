@@ -17,33 +17,36 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        pressure : float, optional
+        pressure: float, optional
             Pressure in bars, by default 1
-        init_comp : dict, optional
+        init_comp: dict, optional
             Initial composition in the measurement volume (prior to chemical
             reaction). If not given standard air composition is assumed as:
-            {
-            'N2': 0.79,
-            'Ar': 0.0,
-            'CO2': 0,
-            'CO': 0,
-            'H2': 0,
-            'O2': 0.21,
-            'H2O': 0
-            }
-        chi_set : str, optional
+
+            .. code-block:: python
+
+                {
+                'N2': 0.79,
+                'Ar': 0.0,
+                'CO2': 0,
+                'CO': 0,
+                'H2': 0,
+                'O2': 0.21,
+                'H2O': 0
+                }
+        chi_set: str, optional
             Choose from the available set of susceptibilities, by default
             'SET 1':
-            - SET 1: based on CARSFT
-            - SET 2: based on NRC
-            - SET 3: based on Eckbreth
 
-        kwargs
-        ------
-        Keyword arguments for ``LineStrength`` are accepted:
-        species : str, optional
+            * 'SET 1': based on CARSFT
+            * 'SET 2': based on NRC
+            * 'SET 3': based on Eckbreth
+
+        Other Parameters:
+        -----------------
+        species: str, optional
             Specify the molecule, by default 'N2'. Currently only supports 'N2'
-        custom_dict : dict, optional
+        custom_dict: dict, optional
             Specify custom molecular constants, by default None. This can be
             used to modify default molecular constants and/or add custom
             species. The dictionary should contain all the necessary keys as in
@@ -91,7 +94,7 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature : float
+        temperature: float
             Temperature in [K]
 
         Returns
@@ -108,9 +111,9 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature : float
+        temperature: float
             Temperature in [K]
-        local_comp : dict, optional
+        local_comp: dict, optional
             A dictionary of local gas composition (percentile) for the purpose
             of calculating nonresonant background and collisional narrowing, by
             default None. If not given, initial composition will be used
@@ -138,16 +141,16 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        v : int
+        v: int
             Vibrational quantum number
-        j : int
+        j: int
             Rotational quantum number
-        branch : int, optional
+        branch: int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0
 
         Returns
         -------
-        d_squared : float
+        d_squared: float
             Transition amplitude squared based on specified v, j and branch
         """
         # Calculate the line strength factors using the LineStrength class
@@ -172,29 +175,29 @@ class CarsSpectrum():
         taken as the same as Q-branch. It is also independent of vibrational
         state. Only valid for N2 at the moment
 
+        .. attention::
+
+            Due to nuclear-spin selection rules for N2, gamma_ji is zero when
+            (j_j-j_i) is odd. This would need to be adjusted for other types of
+            molecules
+
         Parameters
         ----------
-        temperature : float
+        temperature: float
             Temperature in [K]
-        j_i : int
+        j_i: int
             Rotational quantum number of the initial state
-        j_j : int
+        j_j: int
             Rotational quantum number of the final state
-        fit_param : list
+        fit_param: list
             The four fitting parameters in a list: alpha, beta, sigma, m,
             default None. Needs to be provided
 
         Returns
         -------
-        gamma_ji, gamma_ij : float
+        gamma_ji, gamma_ij: float
             Upward and downward relaxation rate.
-
-        Warning
-        -------
-        Due to nuclear-spin selection rules for N2, gamma_ji is zero when
-        (j_j-j_i) is odd. This would need to be adjusted for other types of
-        molecules
-        """
+       """
         # Energies of the rovibrational states involved.
         Ej_i = self.ls_factors.term_values(0, j_i, 'Fv')
         del_E = self.ls_factors.term_values(0, j_j, 'Fv') - Ej_i
@@ -225,35 +228,37 @@ class CarsSpectrum():
         laws. The calculations are conducted for a fixed number of j levels,
         independent of v or branch
 
+        .. note::
+
+            * The (absolute) diagonal values are the HWHM of Raman linewidth.
+              They are cross checked against NRC report (D4-D9) at
+              1 atm and 1550 K
+            * To match with CARSFT exponential gap model, it seems gamma_mat
+              needs to be multiplied by 2
+
         Parameters
         ----------
-        temperature : float
+        temperature: float
             Temperature in [K].
-        js : int, optional
+        js: int, optional
             Total number of rotational levels to be considered, by default 70
-        mode : str, optional
+        mode: str, optional
             By default 'MEG' is used. Possible options are:
-            - 'MEG': Modified exponential gap law considering only N2-N2
-            collisions
-            - 'EMEG': Extended MEG which weighs the contributions of N2, CO2
-            and H2O, following:
+
+            * 'MEG': Modified exponential gap law considering only N2-N2
+              collisions
+            * 'EMEG': Extended MEG which weighs the contributions of N2, CO2
+              and H2O, following:
               Woyde and Stricker, Appl. Phys. B 50, 1990. (To be implemented)
-            - 'XMEG': Extended MEG which considers vibrational dephasing,
-            following:
-            Porter et al, Appl. Phys. B 51, 1990. (To be implemented)
+            * 'XMEG': Extended MEG which considers vibrational dephasing,
+              following:
+              Porter et al, Appl. Phys. B 51, 1990. (To be implemented)
 
         Returns
         -------
         2d array with the shape of (js, js)
             Relaxation matrix with the shape of js x js
-
-        Note
-        ----
-        - The (absolute) diagonal values are the HWHM of Raman linewidth. They
-        are cross checked against NRC report (D4-D9) at 1 atm and 1550 K
-        - To match with CARSFT exponential gap model, it seems gamma_mat
-        needs to be multiplied by 2
-        """
+       """
         if mode != 'MEG':
             raise ValueError('Only MEG available at the moment!')
         # Define fitting parameters for N2-N2, N2-CO2, N2-H20
@@ -278,33 +283,33 @@ class CarsSpectrum():
         """Calculate the theoretical peak intensity for the specified
         transition, assuming isolated lines
 
+        .. note::
+
+            The purpose of this method is to check against the values tabulated
+            in the NRC report on D4-D9. The agreement is excellent if x_mol is
+            set to 1 and if the Gamma_j from NRC is used.
+
         Parameters
         ----------
-        x_mol : float
+        x_mol: float
             Mole fraction of probed molecule within [0, 1]
-        temperature : float
+        temperature: float
             Temperature in the probe volume
-        v : int
+        v: int
             Vibrational quantum number
-        j : int
+        j: int
             Rotational quantum number
-        branch : int, optional
+        branch: int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0
-        Gamma_j : float, optional
+        Gamma_j: float, optional
             Raman linewidth, by default None. When not given, the value from
-            ``linewidth_isolated()`` calculated.
+            ``linewidth_isolated()`` calculated
 
         Returns
         -------
         float
-            Peak transition amplitude based on specified v, j and branch.
-
-        Note
-        ----
-        The purpose of this method is to check against the values tabulated in
-        the NRC report on D4-D9. The agreement is excellent if x_mol is set to
-        1 and if the Gamma_j from NRC is used
-        """
+            Peak transition amplitude based on specified v, j and branch
+       """
         # Species number density
         N = x_mol*self.num_dens(temperature)
 
@@ -325,17 +330,17 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        nu_s : 1d array of floats
+        nu_s: 1d array of floats
             Stokes frequencies (i.e., the calculation spectral domain)
-        temperature : float
+        temperature: float
             Temperature in [K]
-        vs : int, optional
+        vs: int, optional
             Total number of vibrational levels to be considered, by default 3
-        js : int, optional
+        js: int, optional
             Total number of rotational levels to be considered, by default 70
-        branches : list of int, optional
+        branches: list of int, optional
             Branches to be considered, by default (0,) (only Q-branch)
-        del_Tv : float, optional
+        del_Tv: float, optional
             Absolute difference between vibrational and rotational temperature,
             by default 0
 
@@ -389,17 +394,17 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        nu_s : 1d array of floats
+        nu_s: 1d array of floats
             Stokes frequencies (i.e., the calculation spectral domain)
-        temperature : float
+        temperature: float
             Temperature in the probe volume
-        vs : int, optional
+        vs: int, optional
             Total number of vibrational levels to be considered, by default 3
-        js : int, optional
+        js: int, optional
             Total number of rotational levels to be considered, by default 70
-        branches : list of int, optional
+        branches: list of int, optional
             Branches to be considered, by default (2, -2, 0)
-        del_Tv : float, optional
+        del_Tv: float, optional
             Absolute difference between vibrational and rotational temperature,
             by default 0
 
@@ -442,59 +447,66 @@ class CarsSpectrum():
         """Theoretical anti-Stokes signal convoluted with a chosen laser
         lineshape
 
+        .. note::
+
+            The Kataoka (or T-K) convolution is a simplified form derived by
+            Farrow and Rahn, J. Opt. Soc. Am. B, vol.2, 1986. It is essentially
+            an average of convolve(chi, pump)**2 and convolve(chi**2, pump),
+            which takes care of the cross coherence effect. Excellent
+            agreements are found when compared with Figs.13-15 in NRC report.
+
         Parameters
         ----------
-        temperature : float
+        temperature: float
             Temperature in the probe volume.
-        x_mol : float, optional
+        x_mol: float, optional
             Mole fraction of probed molecule, by default None
-        nu_s : 1d array of float, optional
+        nu_s: 1d array of float, optional
             Stokes frequencies (i.e., the calculation spectral domain), by
             default None
-        pump_lw : float, optional
+        pump_lw: float, optional
             Pump laser linewdith (FWHM) in cm^-1, by default None (i.e., no
             laser convolution is performed)
-        mode : dict, optional
+        mode: dict, optional
             A dictionary containing the control parameters for creating the
             CARS spectrum, by default:
-            pump_ls : 'Gaussian'
+
+            pump_ls: 'Gaussian'
                 Choose between pump laser lineshape between 'Gaussian' and
                 'Lorentzian'
-            chi_rs : 'G-matrix'
+            chi_rs: 'G-matrix'
                 The method to compute resonant susceptibility: 'isolated' or
                 'G-matrix' (collisional narrowing)
-            convol : 'Kataoka' or 'K'
+            convol: 'Kataoka' or 'K'
                 Two ways to convolve the laser line with the resonant CARS
                 susceptibilities:
-                - 'Yuratich' or 'Y': One convolution, no cross coherence
-                effects accounted for
-                - 'Kataoka' or 'K': Cross-coherence convolution, following:
-                Teets 1984 and Kataoka et al. 1982
-                This is necessary if pump linewidth is comparable to the
-                Raman linewidth (as is often the case at low T) and if
-                nonresonant contribution competes with resonant signal
-            doppler_effect : True
+
+                * 'Yuratich' or 'Y': One convolution, no cross coherence
+                  effects accounted for
+                * 'Kataoka' or 'K': Cross-coherence convolution, following:
+                  Teets 1984 and Kataoka et al. 1982
+                  This is necessary if pump linewidth is comparable to the
+                  Raman linewidth (as is often the case at low T) and if
+                  nonresonant contribution competes with resonant signal
+            doppler_effect: True
                 Whether or not to take into account additional Doppler
                 broadening
-            chem_eq : False
+            chem_eq: False
                 Whether or not to assume chemical equilibrium. If True, an
                 ``eq_func`` needs to be provided
-        eq_func : func, optional
+        eq_func: func, optional
                 A function used to calculate local gas composition based on
                 temperature and initial gas composition
 
         Other Parameters
         ----------------
-        **kwargs
-        This method also takes the following keyword arguments for computing
-        resonant signal:
-        vs : int, optional
+        vs: int, optional
             Total number of vibrational levels to be considered, by default 3
-        js : int, optional
+        js: int, optional
             Total number of rotational levels to be considered, by default 70
-        branches : list of int, optional
+        branches: list of int, optional
             Branches to be considered, by default (2, -2, 0)
-        del_Tv : float, optional
+        del_Tv: float, optional
         Absolute difference between vibrational and rotational temperature,
         by default 0
 
@@ -504,15 +516,7 @@ class CarsSpectrum():
             Spectral locations in wavenumbers and theoretical CARS spectrum. If
             pump_lw is not specified, I_as needs to be multiplied by 1e-30 to
             retain its actual physical magnitude in cm3/erg
-
-        Note
-        ----
-        The Kataoka (or T-K) convolution is a simplified form derived by
-        Farrow and Rahn, J. Opt. Soc. Am. B, vol.2, 1986. It is essentially an
-        average of convolve(chi, pump)**2 and convolve(chi**2, pump), which
-        takes care of the cross coherence effect. Excellent agreements
-        are found when compared with Figs.13-15 in NRC report.
-        """
+       """
         if synth_mode is None:
             self.synth_mode = {'pump_ls': 'Gaussian',
                                'chi_rs': 'G-matrix',
