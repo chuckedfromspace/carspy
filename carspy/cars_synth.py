@@ -42,8 +42,8 @@ class CarsSpectrum():
             * 'SET 2': based on NRC
             * 'SET 3': based on Eckbreth
 
-        Other Parameters:
-        -----------------
+        Other Parameters
+        ----------------
         species: str, optional
             Specify the molecule, by default 'N2'. Currently only supports 'N2'
         custom_dict: dict, optional
@@ -51,8 +51,11 @@ class CarsSpectrum():
             used to modify default molecular constants and/or add custom
             species. The dictionary should contain all the necessary keys as in
             the default:
-            ['we', 'wx', 'wy', 'wz', 'Be', 'De', 'alpha_e', 'beta_e',
-             'gamma_e', 'H0', 'He', 'mu', 'MW', 'Const_Raman', 'G/A']
+
+            .. code-block:: python
+
+                ['we', 'wx', 'wy', 'wz', 'Be', 'De', 'alpha_e', 'beta_e',
+                'gamma_e', 'H0', 'He', 'mu', 'MW', 'Const_Raman', 'G/A']
         """
         self.pressure = pressure
 
@@ -507,8 +510,8 @@ class CarsSpectrum():
         branches: list of int, optional
             Branches to be considered, by default (2, -2, 0)
         del_Tv: float, optional
-        Absolute difference between vibrational and rotational temperature,
-        by default 0
+            Absolute difference between vibrational and rotational temperature,
+            by default 0
 
         Returns
         -------

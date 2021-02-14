@@ -287,8 +287,8 @@ class LineStrength():
             Q, S or O-branch with a value of 0, 2 or -2, by default 0
         del_Tv: float, optional
 
-        Other Parameters:
-        -----------------
+        Other Parameters
+        ----------------
         All keyword arguments from ``pop_frac``
 
         Returns
