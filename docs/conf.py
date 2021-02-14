@@ -29,12 +29,25 @@ import carspy
 #
 # needs_sphinx = '1.0'
 
+# shpinx.ext.autodoc settings
+autoclass_content = 'both'  # needed to build docstring from __init()__
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.intersphinx',
+              'numpydoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# numpydoc settings
+# numpydoc_xref_param_type = True
+# numpydoc_xref_ignore = {'optional', 'type_without_description', 'BadException'}
+numpydoc_class_members_toctree = False
+numpydoc_show_class_members = False
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -46,9 +59,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'carspy'
-copyright = "2021, Zhiyao Yin"
-author = "Zhiyao Yin"
+project = 'CARSpy'
+copyright = '2021, Zhiyao Yin, German Aerospace Center'
+author = 'Zhiyao Yin'
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -83,12 +96,12 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_book_theme'
 
+html_title = project
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
 # documentation.
-#
 # html_theme_options = {}
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -157,6 +170,3 @@ texinfo_documents = [
      'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-
