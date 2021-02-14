@@ -1,20 +1,22 @@
-Welcome to carspy's documentation!
-======================================
+Welcome
+=======
+
+``carspy`` is a python module for synthesizing and fitting experimental spectra obtained with Coherent Anti-Stokes Raman Spectroscopy (CARS).
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: Quickstart:
 
    readme
    installation
    usage
-   modules
    contributing
    authors
    history
 
-Indices and tables
-==================
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   line_strength
+   cars_synth

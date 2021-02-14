@@ -12,10 +12,10 @@ CARSpy
         :target: https://carspy.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-Synthesizing and fitting coherent anti-Stokes Raman spectra (CARS) in Python
+Synthesizing and fitting coherent anti-Stokes Raman spectra in Python.
 
 * Free software: BSD-3-Clause license
-* Documentation: https://carspy.readthedocs.io (WIP).
+* Documentation: https://carspy.readthedocs.io
 
 Background
 ----------
@@ -29,8 +29,8 @@ I hope to also benefit from this transparency and openness to public scrutiny. A
 it is most likely not error-free and has a lot of room left for improvement.
 Therefore, I plan to rewrite the important modules (spectrum synthesis and least-square fit) and slowly bring all features (see below) up to date.  I am also looking forward to feedbacks and potential collaborators from the community.
 
-**NOTE**: Nitrogen is currently the only species implemented/tested in ``carspy``. Other common species will be added in the future (or can be readily introduced via customization).
-
+.. note::
+        Nitrogen is currently the only species implemented/tested in ``carspy``. Other common species will be added in the future (or can be readily introduced via customization).
 
 Features
 --------
@@ -49,11 +49,16 @@ Features
         :align: center
         :alt: cars model
 
+.. note::
+        * The default chemical equilibrium solver based on ``cantera`` can be replaced by custom functions.
+        * Voigt profile is implemented via numerical convolution of a Gaussian profile with the Raman lines.
+        * Extended exponential gap model is not yet implemented.
+
 Highlights
 ----------
 
-1. Option to incorporate equilibrium composition using an external chemical equilibrium calculator (such as ``cantera``), such that temperature is the only fitting parameter for thermometry
-2. Vibrational and rotational nonequilibrium: vibrational temperature can be varied independently from rotational temperature
+* Option to incorporate equilibrium composition using an external chemical equilibrium calculator (such as ``cantera``), such that temperature is the only fitting parameter for thermometry
+* Vibrational and rotational nonequilibrium: vibrational temperature can be varied independently from rotational temperature
 
 Comparisons with CARSFT
 -----------------------
@@ -72,29 +77,34 @@ Comparisons with CARSFT
 
     Figure 2 Synthesized CARS spectra in N2 at 10 atm, 2400 K, with a pump linewidth of 0.5 cm-1, using modified exponential gap law (MEG) and cross-coherence convolution.
 
+.. caution::
+        There seems to exist a number of compiled versions of CARSFT that have likely been modified (in a hardcoded way) to suit specific purposes (e.g., artificially inflated nonresonant background and/or Raman linewidth).
+
+        The version used for the comparisons here was likely optimized for dual-pump CARS, such that several important settings (isolated line, single/double convolution, MEG, etc) don't behave consistently. Small tweaks during the configuration setup (e.g., modifiers) were necessary to create theoretically correct spectra in CARSFT.
+
 Roadmap
 -------
 
 The above features currently present in the draft code will be gradually improved and included in the ``main`` branch. Here is a tentative plan:
 
-1. (Implemented) Module for synthesizing CARS spectra (optional with ``cantera``)
-2. (Short-term) Module for least-square fit (with ``lmfit``)
-3. (Mid-term) Multiprocessing
-4. (Mid-term) Docs
-5. (Mid-term) Tutorials
-6. (Long-term) Other common diatomic species
-7. (Long-term) Dualpump/Wide CARS
+* (Implemented) Module for synthesizing CARS spectra (optional with ``cantera``)
+* (Short-term) Module for least-square fit (with ``lmfit``)
+* (Mid-term) Multiprocessing
+* (Mid-term) Docs
+* (Mid-term) Tutorials
+* (Long-term) Other common diatomic species
+* (Long-term) Dualpump/Wide CARS
 
 Citation
 --------
 
-Please consider citing this repository if you use carspy for your research as:
+Please consider citing this repository if you use ``carspy`` for your publications as:
 
 .. code-block:: bib
 
     @misc{Yin2021,
       author = {Yin, Zhiyao},
-      title = {CARSpy: Synthesizing and fitting coherent anti-Stokes Raman spectra (CARS) in Python},
+      title = {CARSpy: Synthesizing and fitting coherent anti-Stokes Raman spectra in Python},
       year = {2021},
       publisher = {GitHub},
       journal = {GitHub repository},
