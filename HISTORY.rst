@@ -2,6 +2,13 @@
 History
 =======
 
+0.2.1 (2021-02-14)
+------------------
+
+* Change Sphinx theme
+* Add existing modules to docs
+* Fix format errors in docstrings
+
 0.2.0 (2021-02-13)
 ------------------
 
