@@ -20,8 +20,11 @@ CARSpy
 
 Synthesizing and fitting coherent anti-Stokes Raman spectra in Python.
 
-* Free software: BSD-3-Clause license
-* Documentation: https://carspy.readthedocs.io
+* `Documentation`_
+* `Project homepage`_
+
+.. _`Documentation`: https://carspy.readthedocs.io
+.. _`Project homepage`: https://github.com/chuckedfromspace/carspy
 
 Background
 ----------
