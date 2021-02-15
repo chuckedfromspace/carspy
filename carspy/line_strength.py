@@ -1,32 +1,29 @@
-"""
-Spectroscopic properties used to calculate line strength and shape for CARSpy
-"""
+"""Calculate Raman linestrength for common gas species."""
 import numpy as np
 from ._constants import mol_const, univ_const
 
 
 def linewidth_isolated(pressure, temperature, j):
-    """Temperature-dependent Raman linewidths of N2 from:
-    Farrow et al., Appl. Opt., vol.21, No.17, 1982
+    r"""Temperature-dependent Raman linewidths of N2 from :cite:`Farrow:82`.
 
-    .. attention::
+    .. admonition:: Deprecated
+       :class: attention
 
-        DEPRECIATED. Use the MEG to calculate rate matrix and isolated
-        linewidth
+       Use the MEG to calculate rate matrix and isolated linewidth.
 
     Parameters
     ----------
     pressure: float
-        Pressure in [bar]
+        Pressure in [bar].
     temperature: float
-        Temperature in [K]
+        Temperature in [K].
     j: int
-        Rotational quantum number
+        Rotational quantum number.
 
     Returns
     -------
     Gamma_j: float
-        Raman linewidth (FWHM) in [cm^-1]
+        Raman linewidth (FWHM) in [:math:`\mathrm{cm}^{-1}`].
     """
     if temperature > 600:
         _Gamma = 2*(1.79534e-2 - 6.3087e-4*j + 4.7995e-5*j**2
@@ -40,16 +37,16 @@ def linewidth_isolated(pressure, temperature, j):
 
 
 class LineStrength():
-    """A collection of methods concerning line strength in CARS Spectrum
-    """
+    """A collection of methods concerning line strength in CARS Spectrum."""
 
     def __init__(self, species='N2', custom_dict=None):
-        """Input molecular constants
+        """Input molecular constants.
 
         Parameters
         ----------
         species: str, optional
-            Specify the molecule, by default 'N2'. Currently only supports 'N2'
+            Specify the molecule, by default 'N2'. Currently only
+            supports 'N2'.
         custom_dict: dict, optional
             Specify custom molecular constants, by default None. This can be
             used to modify default molecular constants and/or add custom
@@ -76,41 +73,41 @@ class LineStrength():
         self.Const_D = univ_const('Const_D')
 
     def int_corr(self, j, branch=0):
-        """
-        Intensity corrections for dv=0, 2 and -2 (Q, S and O-branches):
+        r"""Intensity corrections Q, S and O-branches.
 
-        * Placzek-Teller coefficient
-        * Centrifugal distortion caused by vibration-rotation interaction
+        * Placzek-Teller coefficient.
+        * Centrifugal distortion caused by vibration-rotation interaction.
 
         .. warning::
 
             The Herman-Wallis factor for centrifugal distortion may need to be
             updated. It seems the commonly used James-Klemperer expression
             (as used in this code) for Q-branch is not correct. This matters
-            more for lighter molecules like H2. See
-            Marrocco, Chem. Phys. Lett 442 (2007)
-            for more details
+            more for lighter molecules like H2. See :cite:`Marrocco:07`
+            for more details.
 
         .. note::
 
-            It seems CARSFT has set cd_corr=1 for Q-branch transitions. Here
-            the formula from NRC is taken. This causes a relative intensity
+            It seems CARSFT :cite:`Palmer:89` has set cd_corr=1 for Q-branch
+            transitions. Here the formula from NRC :cite:`Parameswaran:88`
+            is taken. This causes a relative intensity
             change in Q- vs O/S-braches. Since O/S-branches are significantly
-            weaker around v=0-1, 1-2 transitions (~2330 cm^-1), this difference
-            is unlikely to raise any issue.
+            weaker around v=0-1, 1-2 transitions for N2
+            (~2330 :math:`\mathrm{cm}^{-1}`), this difference is unlikely to
+            raise any issue.
 
         Parameters
         ----------
         j: int
             Rotational quantum number.
         branch: int, optional
-            Q, S or O-branch with a value of 0, 2 or -2, by default 0
+            Q, S or O-branch with a value of 0, 2 or -2, by default 0.
 
         Returns
         -------
         pt_coeff,  cd_corr: float
             Placzek-Teller coefficient and centrifugal distortion correction
-            for the specific j-branch combination
+            for the specific j-branch combination.
         """
         mc_dict = self.mc_dict
         pt_coeff, cd_corr = 0, 1
@@ -130,15 +127,14 @@ class LineStrength():
         return pt_coeff, cd_corr
 
     def term_values(self, v, j, mode='sum'):
-        """
-        Calculate the term values for an anharmonic vibrating rotor.
+        """Calculate the term values for an anharmonic vibrating rotor.
 
         Parameters
         ----------
         v: int
-            Vibrational quantum number
+            Vibrational quantum number.
         j: int
-            Rotational quantum number
+            Rotational quantum number.
         mode: str, optional
             Determine what to return, by default 'sum':
 
@@ -201,14 +197,13 @@ class LineStrength():
         return self.term_values(v+1, j+branch) - self.term_values(v, j)
 
     def pop_frac(self, temperature, v, j, del_Tv=0.0, vs=20, js=100):
-        """Ro-vibrational partition functions for the given species at the
-        specified temperatur
+        """Calculate ro-vibrational partition functions.
 
         Parameters
         ----------
         temperature: float
             Translational (equilibrium) temperature of the measurement volume
-            in Kelvin
+            in [K].
         v: int
             Vibrational quantum number.
         j: int
@@ -216,11 +211,11 @@ class LineStrength():
         del_Tv: float
             The amount Tv exceeds Tr, by default 0.0.This is only used when
             stimulated Raman process competes with CARS and Tv becomes
-            obviously higher than Tr
+            obviously higher than Tr.
         vs: int, optional
-            Total number of vibrational levels to be considered, by default 20
+            Total number of vibrational levels to be considered, by default 20.
         js: int, optional
-            Total number of rotational levels to be considered, by default 100
+            Total number of rotational levels to be considered, by default 100.
 
         Returns
         -------
@@ -228,7 +223,7 @@ class LineStrength():
             Population fraction of (v, j) state at the given temperature.
         """
         def Gj(j):
-            """Degeneracy from nuclear spin
+            """Degeneracy from nuclear spin.
 
             Currently availabe for 3 popular diatomic molecules:
                 * N2: Even j levels have Gj=6; Odd j levels have Gj=3
@@ -265,63 +260,65 @@ class LineStrength():
         return fvj
 
     def pop_factor(self, temperature, v, j, branch=0, **kwargs):
-        """Population factor in the line intensity weight factor. Population
-        difference between the lower and upper states for the specified
-        transition (v, j, branch) at the given temperature
+        """Calculate population factor in the line intensity weight factor.
+
+        This is the population difference between the lower and upper states
+        for the specified transition (v, j, branch) at the given temperature.
 
         .. note::
 
-            Validated against information from NRC Report TR-GD-013 (D4)
+            Validated against information from NRC Report TR-GD-013 (D4).
 
         Parameters
         ----------
         temperature: float
-            Translational (equilibrium) temperature of the measurement volume
+            Translational (equilibrium) temperature of the measurement volume.
         v: int
-            Vibrational quantum number
+            Vibrational quantum number.
         j: int or array of int
             Rotational quantum number. Recommended here to use an array if
             multiple j-levels need to be computed. This reduces the necessity
-            of extra for-loops for j when synthesizing spectrum
+            of extra for-loops for j when synthesizing spectrum.
         branch: int, optional
-            Q, S or O-branch with a value of 0, 2 or -2, by default 0
-        del_Tv: float, optional
+            Q, S or O-branch with a value of 0, 2 or -2, by default 0.
 
         Other Parameters
         ----------------
-        All keyword arguments from ``pop_frac``
+        All keyword arguments from ``pop_frac``.
 
         Returns
         -------
         float
-            Fractional population difference between the lower and upper states
-       """
+            Fractional population difference between the lower and upper
+            states.
+        """
         f_low = self.pop_frac(temperature, v, j, **kwargs)
         f_up = self.pop_frac(temperature, v+1, j+branch, **kwargs)
 
         return f_low - f_up
 
     def doppler_lw(self, temperature, nu_0=2300.):
-        """Calculate the Doppler broadening FWHM of the transitions
+        r"""Calculate the Doppler broadening FWHM of the transitions.
 
         .. warning::
 
             This simple implementation for Doppler broadening may not be
-            accurate enough for Dualpump- or Wide-CARS
+            accurate enough for Dualpump- or Wide-CARS.
 
         Parameters
         ----------
         temperature: float
-            Translational (equilibrium) temperature of the measurement volume
+            Translational (equilibrium) temperature of the measurement volume.
         nu_0: float, optional
-            Transition center frequency, by default 2300 cm-1. It should
-            actually be caclulated with ``line_pos`` but to speed up
-            computation, a single value is assumed for the entire CARS spectrum
+            Transition center frequency, by default 2300 in
+            [:math:`\mathrm{cm}^{-1}`]. It should actually be caclulated with
+            ``line_pos`` for each single rotational transition. But to speed up
+            computation, a single value is assumed for the entire
+            CARS spectrum.
 
         Returns
         -------
         float
             FWHM of the Doppler broadening
         """
-
         return nu_0*(temperature/self.mc_dict['MW'])**0.5*self.Const_D

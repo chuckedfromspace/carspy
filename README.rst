@@ -2,7 +2,13 @@
 CARSpy
 ======
 
+.. image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
+        :target: https://opensource.org/licenses/BSD-3-Clause
+
 .. image:: https://img.shields.io/pypi/v/carspy.svg
+        :target: https://pypi.python.org/pypi/carspy
+
+.. image:: https://img.shields.io/pypi/pyversions/carspy.svg
         :target: https://pypi.python.org/pypi/carspy
 
 .. image:: https://travis-ci.com/chuckedfromspace/carspy.svg
