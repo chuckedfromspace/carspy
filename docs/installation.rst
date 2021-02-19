@@ -48,4 +48,4 @@ Once you have a copy of the source, you can install it with:
 
 
 .. _Github repo: https://github.com/chuckedfromspace/carspy
-.. _tarball: https://github.com/chuckedfromspace/carspy/tarball/master
+.. _tarball: https://github.com/chuckedfromspace/carspy/tarball/main
