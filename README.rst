@@ -46,7 +46,7 @@ Quick start
 
 .. code-block:: console
 
-    $ git clone git://github.com/chuckedfromspace/carspy
+    $ pip install carspy
 
 See `installation guide`_ for alternative methods.
 
