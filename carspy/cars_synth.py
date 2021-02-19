@@ -237,7 +237,7 @@ class CarsSpectrum():
 
         .. note::
 
-            * The (absolute) diagonal values are the HWHM of Raman linewidth.
+            The (absolute) diagonal values are the HWHM of Raman linewidth.
             They are cross checked against NRC report :cite:`Parameswaran:88`
             on D4-D9 at 1 atm and 1550 K.
 
