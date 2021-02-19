@@ -41,6 +41,17 @@ Therefore, I plan to rewrite the important modules (spectrum synthesis and least
 .. note::
         Nitrogen is currently the only species implemented/tested in ``carspy``. Other common species will be added in the future (or can be readily introduced via customization).
 
+Quick start
+-----------
+
+.. code-block:: console
+
+    $ git clone git://github.com/chuckedfromspace/carspy
+
+See `installation guide`_ for alternative methods.
+
+.. _`installation guide`: https://carspy.readthedocs.io/en/latest/installation.html
+
 Features
 --------
 

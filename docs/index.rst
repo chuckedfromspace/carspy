@@ -5,19 +5,24 @@ Welcome
 
 .. toctree::
    :maxdepth: 1
-   :caption: Quickstart:
+   :caption: Get Started
 
    readme
    installation
    usage
    contributing
-   authors
-   history
-   references
 
 .. toctree::
    :maxdepth: 1
-   :caption: Modules:
+   :caption: Modules
 
    line_strength
    cars_synth
+
+.. toctree::
+   :maxdepth: 1
+   :caption: References
+
+   authors
+   history
+   references
