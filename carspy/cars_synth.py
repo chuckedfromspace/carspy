@@ -3,7 +3,7 @@ import numpy as np
 from .line_strength import LineStrength, linewidth_isolated
 from ._constants import univ_const, chi_const
 from .convol_fcn import gaussian_line, lorentz_line
-from .utils import comp_normalize
+from .utils import comp_normalize, eq_comp
 
 
 class CarsSpectrum():
@@ -14,9 +14,9 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        pressure: float, optional
+        pressure : float, optional
             Pressure in bars, by default 1.
-        init_comp: dict, optional
+        init_comp : dict, optional
             Initial composition in the measurement volume (prior to chemical
             reaction). If not given standard air composition is assumed as:
 
@@ -31,9 +31,9 @@ class CarsSpectrum():
                 'O2': 0.21,
                 'H2O': 0
                 }
-        chi_set: str, optional
-            Choose from the available set of susceptibilities, by default
-            'SET 1':
+        chi_set : str, optional
+            Choose from the available set of non-resonant susceptibilities, by
+            default 'SET 1':
 
             * 'SET 1': based on CARSFT :cite:`Palmer:89`.
             * 'SET 2': based on NRC :cite:`Parameswaran:88`.
@@ -41,10 +41,10 @@ class CarsSpectrum():
 
         Other Parameters
         ----------------
-        species: str, optional
+        species : str, optional
             Specify the molecule, by default 'N2'. Currently only supports
             'N2'.
-        custom_dict: dict, optional
+        custom_dict : dict, optional
             Specify custom molecular constants, by default None. This can be
             used to modify default molecular constants and/or add custom
             species. The dictionary should contain all the necessary keys as in
@@ -95,7 +95,7 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Temperature in [K].
 
         Returns
@@ -111,9 +111,9 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Temperature in [K].
-        local_comp: dict, optional
+        local_comp : dict, optional
             A dictionary of local gas composition (percentile) for the purpose
             of calculating nonresonant background and collisional narrowing, by
             default None. If not given, initial composition will be used.
@@ -142,16 +142,16 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        v: int
+        v : int
             Vibrational quantum number.
-        j: int
+        j : int
             Rotational quantum number.
-        branch: int, optional
+        branch : int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0.
 
         Returns
         -------
-        d_squared: float
+        d_squared : float
             Transition amplitude squared based on specified v, j and branch.
         """
         # Calculate the line strength factors using the LineStrength class
@@ -188,19 +188,19 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Temperature in [K].
-        j_i: int
+        j_i : int
             Rotational quantum number of the initial state.
-        j_j: int
+        j_j : int
             Rotational quantum number of the final state.
-        fit_param: list
+        fit_param : list
             The four fitting parameters in a list: alpha, beta, sigma, m,
             default None. Needs to be provided.
 
         Returns
         -------
-        gamma_ji, gamma_ij: float
+        gamma_ji, gamma_ij : float
             Upward and downward relaxation rate.
         """
         # Energies of the rovibrational states involved.
@@ -243,11 +243,11 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Temperature in [K].
-        js: int, optional
+        js : int, optional
             Total number of rotational levels to be considered, by default 70.
-        mode: str, optional
+        mode : str, optional
             By default 'MEG' is used. Possible options are:
 
             * 'MEG': Modified exponential gap law considering only N2-N2
@@ -297,17 +297,17 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        x_mol: float
+        x_mol : float
             Mole fraction of probed molecule within [0, 1].
-        temperature: float
+        temperature : float
             Temperature in the probe volume.
-        v: int
+        v : int
             Vibrational quantum number.
-        j: int
+        j : int
             Rotational quantum number.
-        branch: int, optional
+        branch : int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0.
-        Gamma_j: float, optional
+        Gamma_j : float, optional
             Raman linewidth, by default None. When not given, the value from
             ``linewidth_isolated`` calculated.
 
@@ -337,17 +337,17 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        nu_s: 1d array of floats
+        nu_s : 1d array of floats
             Stokes frequencies (i.e., the calculation spectral domain).
-        temperature: float
+        temperature : float
             Temperature in [K].
-        vs: int, optional
+        vs : int, optional
             Total number of vibrational levels to be considered, by default 3.
-        js: int, optional
+        js : int, optional
             Total number of rotational levels to be considered, by default 70.
-        branches: list of int, optional
+        branches : list of int, optional
             Branches to be considered, by default (0,) (i.e., only Q-branch).
-        del_Tv: float, optional
+        del_Tv : float, optional
             Absolute difference between vibrational and rotational temperature,
             by default 0.
 
@@ -401,17 +401,17 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        nu_s: 1d array of floats
+        nu_s : 1d array of floats
             Stokes frequencies (i.e., the calculation spectral domain).
-        temperature: float
+        temperature : float
             Temperature in the probe volume.
-        vs: int, optional
+        vs : int, optional
             Total number of vibrational levels to be considered, by default 3.
-        js: int, optional
+        js : int, optional
             Total number of rotational levels to be considered, by default 70.
-        branches: list of int, optional
+        branches : list of int, optional
             Branches to be considered, by default (2, -2, 0).
-        del_Tv: float, optional
+        del_Tv : float, optional
             Absolute difference between vibrational and rotational temperature,
             by default 0.
 
@@ -450,7 +450,7 @@ class CarsSpectrum():
         return chi_rs/2/np.pi/self.C
 
     def signal_as(self, temperature, x_mol=None, nu_s=None, pump_lw=None,
-                  synth_mode=None, eq_func=None, **kwargs):
+                  synth_mode=None, eq_func=eq_comp, **kwargs):
         r"""Anti-Stokes signal convoluted with a chosen laser lineshape.
 
         .. note::
@@ -464,27 +464,27 @@ class CarsSpectrum():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Temperature in the probe volume.
-        x_mol: float, optional
+        x_mol : float, optional
             Mole fraction of probed molecule, by default None.
-        nu_s: 1d array of float, optional
+        nu_s : 1d array of float, optional
             Stokes frequencies (i.e., the calculation spectral domain), by
             default None.
-        pump_lw: float, optional
+        pump_lw : float, optional
             Pump laser linewdith (FWHM) in [:math:`\mathrm{cm}^{-1}`],
             by default None (i.e., no laser convolution is performed).
-        mode: dict, optional
+        mode : dict, optional
             A dictionary containing the control parameters for creating the
             CARS spectrum, by default:
 
-            pump_ls: 'Gaussian'
+            pump_ls : 'Gaussian'
                 Choose between pump laser lineshape between 'Gaussian' and
                 'Lorentzian'.
-            chi_rs: 'G-matrix'
+            chi_rs : 'G-matrix'
                 The method to compute resonant susceptibility: 'isolated' or
                 'G-matrix' (collisional narrowing).
-            convol: 'Kataoka' or 'K'
+            convol : 'Kataoka' or 'K'
                 Two ways to convolve the laser line with the resonant CARS
                 susceptibilities:
 
@@ -495,25 +495,26 @@ class CarsSpectrum():
                   This is necessary if pump linewidth is comparable to the
                   Raman linewidth (as is often the case at low T) and if
                   nonresonant contribution competes with resonant signal.
-            doppler_effect: True
+            doppler_effect : True
                 Whether or not to take into account additional Doppler
                 broadening.
-            chem_eq: False
+            chem_eq : False
                 Whether or not to assume chemical equilibrium. If True, an
                 ``eq_func`` needs to be provided.
-        eq_func: func, optional
+        eq_func : func, optional
                 A function used to calculate local gas composition based on
-                temperature and initial gas composition.
+                temperature and initial gas composition. Default is a simple
+                template employing `cantera`.
 
         Other Parameters
         ----------------
-        vs: int, optional
+        vs : int, optional
             Total number of vibrational levels to be considered, by default 3.
-        js: int, optional
+        js : int, optional
             Total number of rotational levels to be considered, by default 70.
-        branches: list of int, optional
+        branches : list of int, optional
             Branches to be considered, by default (2, -2, 0).
-        del_Tv: float, optional
+        del_Tv : float, optional
             Absolute difference between vibrational and rotational temperature,
             by default 0.
 
@@ -539,17 +540,12 @@ class CarsSpectrum():
             x_mol = self.init_comp[self.ls_factors.species]
 
         if self.synth_mode['chem_eq']:
-            # the following is a sample implementation with cantera
-            if temperature > 1200:
-                # use cantera to calculate chemical equilibrium. Hard coded for
-                # only high T regions
-                gas_comp = eq_func(temperature, self.pressure, self.init_comp)
-                gas_comp = comp_normalize(gas_comp)
-            else:
-                gas_comp = self.init_comp
+            gas_comp = eq_func(temperature, self.pressure, self.init_comp)
+            gas_comp = comp_normalize(gas_comp)
             N_species = gas_comp[
                 self.ls_factors.species]*self.num_dens(temperature)
-            chi_nrs = self.chi_nrs_est(temperature, composition=gas_comp)*1e-18
+            chi_nrs = self.chi_nrs_est(temperature, local_comp=gas_comp)*1e-18
+            self.local_comp = gas_comp
         else:
             # Species number density
             N_species = x_mol*self.num_dens(temperature)
