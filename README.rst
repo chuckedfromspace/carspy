@@ -134,7 +134,7 @@ Please consider citing this repository if you use ``carspy`` for your publicatio
 Acknowledgement
 ---------------
 
-* A copy of the NRC report (TR-GD-013_1989) :cite:`Parameswaran:88` was kindly provided by Dr. Gregory Smallwood and his colleagues at NRC,
+* A copy of the NRC report (TR-GD-013_1989) was kindly provided by Dr. Gregory Smallwood and his colleagues at NRC,
   which has significantly eased the difficulty of understanding some of the key theories in synthesizing CARS spectra.
 
 * This package was initially created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
