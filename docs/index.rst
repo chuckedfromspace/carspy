@@ -18,6 +18,8 @@ Welcome
 
    line_strength
    cars_synth
+   convol_fcn
+   utils
 
 .. toctree::
    :maxdepth: 1
