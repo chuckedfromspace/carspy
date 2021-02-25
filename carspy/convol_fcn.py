@@ -1,5 +1,5 @@
-"""
-Functions used in the convolution of CARS spectrum:
+"""Functions used in the convolution of CARS spectrum.
+
 - Laser lineshape
 - Impulse spectral response function (ISRF) for the spectrometer slit
 """
@@ -7,21 +7,21 @@ import numpy as np
 
 
 def gaussian_line(w, w0, sigma):
-    """Generate a normalized Gaussian lineshape (integral equals to 1)
+    """Generate a normalized Gaussian lineshape (integral equals to 1).
 
     Parameters
     ----------
     w : sorted 1d array of floats
-        Spectral positions in wavenumber cm^(-1)
+        Spectral positions in wavenumber cm^(-1).
     w0 : float
-        Center of the Gaussian lineshape in wavenumber cm^(-1)
+        Center of the Gaussian lineshape in wavenumber cm^(-1).
     sigma : float
-        FWHM of the Gaussian lineshape wavenumber cm^(-1)
+        FWHM of the Gaussian lineshape wavenumber cm^(-1).
 
     Returns
     -------
     1d array of floats
-        Intensities of the normalized Gaussian lineshape over w
+        Intensities of the normalized Gaussian lineshape over w.
     """
     _lineshape = 2/sigma*(np.log(2)/np.pi)**0.5*np.exp(
         -4*np.log(2)*((w-w0)/sigma)**2)
@@ -30,16 +30,16 @@ def gaussian_line(w, w0, sigma):
 
 
 def lorentz_line(w, w0, sigma):
-    """Generate a normalized Lorentzian lineshape (integral equals to 1)
+    """Generate a normalized Lorentzian lineshape (integral equals to 1).
 
     Parameters
     ----------
     w : sorted 1d array of floats
-        Spectral positions in wavenumber cm^(-1)
+        Spectral positions in wavenumber cm^(-1).
     w0 : float
-        Center of the Lorentzian lineshape in wavenumber cm^(-1)
+        Center of the Lorentzian lineshape in wavenumber cm^(-1).
     sigma : float
-        FWHM of the Lorentzian lineshape wavenumber cm^(-1)
+        FWHM of the Lorentzian lineshape wavenumber cm^(-1).
 
     Returns
     -------
@@ -52,24 +52,23 @@ def lorentz_line(w, w0, sigma):
 
 
 def voigt_line(w, w0, sigma_V, sigma_L):
-    """Generate an approximated Voigt lineshape following:
-    Whiting, J. Quant. Spectrosc. Radiat. Transfer., 1968
+    """Generate an approximated Voigt lineshape following :cite:`Whiting:68`.
 
     Parameters
     ----------
     w : 1d array of floats
-        Spectral positions in wavenumber cm^(-1)
+        Spectral positions in wavenumber cm^(-1).
     w0 : float
-        Center of the Lorentzian lineshape in wavenumber cm^(-1)
+        Center of the Lorentzian lineshape in wavenumber cm^(-1).
     sigma_V : float
-        FWHM of the Voigt lineshape wavenumber cm^(-1)
+        FWHM of the Voigt lineshape wavenumber cm^(-1).
     sigma_L : float
-        FWHM of the Lorentzian lineshape wavenumber cm^(-1)
+        FWHM of the Lorentzian lineshape wavenumber cm^(-1).
 
     Returns
     -------
     1d array
-        Intensities of the Voigt lineshape over w
+        Intensities of the Voigt lineshape over w.
     """
     # Preparations
     _ratio = sigma_L/sigma_V
@@ -84,23 +83,22 @@ def voigt_line(w, w0, sigma_V, sigma_L):
 
 
 def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
-    """Asymmetric super-Gaussian following:
-    Beirle et al, Atmos. Meas. Tech., 10, 2017
+    """Asymmetric super-Gaussian following :cite:`Beirle:17`.
 
     Parameters
     ----------
     w : sorted 1d array of floats
-        Spectral positions in wavenumber cm^(-1)
+        Spectral positions in wavenumber cm^(-1).
     w0 : float
-        Center of the asymmetric Gaussian function in wavenumber cm^(-1)
+        Center of the asymmetric Gaussian function in wavenumber cm^(-1).
     sigma : float
-        FWHM of the Gaussian function in wavenumber cm^(-1)
+        FWHM of the Gaussian function in wavenumber cm^(-1).
     k : float
-        Controls the skewing of the asymmetry
+        Controls the skewing of the asymmetry.
     a_sigma, a_k : float
-        Tuning factors for sigma and k
+        Tuning factors for sigma and k.
     offset : float
-        Background offset (from experimental spectrum)
+        Background offset (from experimental spectrum).
 
     Returns
     -------
@@ -115,26 +113,26 @@ def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
 
 
 def asym_Voigt(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h, offset):
-    """Asymmetric Voigt profile following NRC
+    """Asymmetric Voigt profile following NRC.
 
     Parameters
     ----------
     w : sorted 1d array of floats
-        Spectral positions in wavenumber cm^(-1)
+        Spectral positions in wavenumber cm^(-1).
     w0 : float
-        Center of the asymmetric Gaussian function in wavenumber cm^(-1)
+        Center of the asymmetric Gaussian function in wavenumber cm^(-1).
     sigma_V_l : float
-        FWHM of the Voigt function in wavenumber cm^(-1) for the lower half
+        FWHM of the Voigt function in wavenumber cm^(-1) for the lower half.
     sigma_V_h : float
-        FWHM of the Voigt function in wavenumber cm^(-1) for the higher half
+        FWHM of the Voigt function in wavenumber cm^(-1) for the higher half.
     sigma_L_l : float
         FWHM of the Lorentzian function in wavenumber cm^(-1) for the
-        lower half
+        lower half.
     sigma_L_h : float
         FWHM of the Lorentzian function in wavenumber cm^(-1) for the
-        higher half
+        higher half.
     offset : float
-        Background offset
+        Background offset.
 
     Returns
     -------
@@ -152,48 +150,49 @@ def asym_Voigt(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h, offset):
 
 def slit_ISRF(w, w0, param_1, param_2, param_3, param_4, offset,
               mode='sGaussian'):
-    """Impulse spectral response function (ISRF) for the spectrometer slit
-    function
+    """Impulse spectral response function (ISRF) as the slit function.
 
     Parameters
     ----------
     w : sorted 1d array of floats
-        Spectral positions in wavenumber cm^(-1)
+        Spectral positions in wavenumber cm^(-1).
     w0 : float
-        Center of the asymmetric Gaussian function in wavenumber cm^(-1)
+        Center of the asymmetric Gaussian function in wavenumber cm^(-1).
     param_1, param_2, param_3, param_4 : float
-        Parameters needed for the asymmetric ISRF depending on the mode
+        Parameters needed for the asymmetric ISRF depending on the mode.
+
         - 'sGaussian':
             sigma : float
-                FWHM of the Gaussian function in wavenumber cm^(-1)
+                FWHM of the Gaussian function in wavenumber cm^(-1).
             k : float
-                Controls the skewing of the asymmetry
+                Controls the skewing of the asymmetry.
             a_sigma, a_k : float
-                Tuning factors for sigma and k
+                Tuning factors for sigma and k.
         - 'Voigt':
             sigma_V_l : float
                 FWHM of the Voigt function in wavenumber cm^(-1) for
-                the lower half
+                the lower half.
             sigma_L_l : float
                 FWHM of the Lorentzian function in wavenumber cm^(-1) for
-                the lower half
+                the lower half.
             sigma_V_h : float
                 FWHM of the Voigt function in wavenumber cm^(-1) for
-                the higher half
+                the higher half.
             sigma_L_h : float
                 FWHM of the Lorentzian function in wavenumber cm^(-1) for
-                the higher half
+                the higher half.
     offset : float
-        Background offset
+        Background offset.
     mode : 'sGaussian', str, optional
         Two options for the ISRF:
-        - Asymmetric super Gaussian: 'sGaussian'
-        - Asymmetric Voigt: 'Voigt'
+
+        - Asymmetric super Gaussian: 'sGaussian'.
+        - Asymmetric Voigt: 'Voigt'.
 
     Returns
     -------
     1d array of floats
-        Intensities of the peak-normalized asymmetric ISRF
+        Intensities of the peak-normalized asymmetric ISRF.
     """
     slit_fc = []
     if mode == 'sGaussian':

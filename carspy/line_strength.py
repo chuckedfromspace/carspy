@@ -13,16 +13,16 @@ def linewidth_isolated(pressure, temperature, j):
 
     Parameters
     ----------
-    pressure: float
+    pressure : float
         Pressure in [bar].
-    temperature: float
+    temperature : float
         Temperature in [K].
-    j: int
+    j : int
         Rotational quantum number.
 
     Returns
     -------
-    Gamma_j: float
+    Gamma_j : float
         Raman linewidth (FWHM) in [:math:`\mathrm{cm}^{-1}`].
     """
     if temperature > 600:
@@ -44,10 +44,10 @@ class LineStrength():
 
         Parameters
         ----------
-        species: str, optional
+        species : str, optional
             Specify the molecule, by default 'N2'. Currently only
             supports 'N2'.
-        custom_dict: dict, optional
+        custom_dict : dict, optional
             Specify custom molecular constants, by default None. This can be
             used to modify default molecular constants and/or add custom
             species. The dictionary should contain all the necessary keys as in
@@ -98,14 +98,14 @@ class LineStrength():
 
         Parameters
         ----------
-        j: int
+        j : int
             Rotational quantum number.
-        branch: int, optional
+        branch : int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0.
 
         Returns
         -------
-        pt_coeff,  cd_corr: float
+        pt_coeff,  cd_corr : float
             Placzek-Teller coefficient and centrifugal distortion correction
             for the specific j-branch combination.
         """
@@ -131,11 +131,11 @@ class LineStrength():
 
         Parameters
         ----------
-        v: int
+        v : int
             Vibrational quantum number.
-        j: int
+        j : int
             Rotational quantum number.
-        mode: str, optional
+        mode : str, optional
             Determine what to return, by default 'sum':
 
             * 'sum' returns the total term values Gv + Fv
@@ -182,14 +182,17 @@ class LineStrength():
             Validated against information from NRC Report TR-GD-013 (B21 Tabel
             B-1).
 
+        Parameters
+        ----------
+        v : int
+            Vibrational quantum number
+        j : int
+            Rotational quantum number
+        branch : 0, int, optional
+            Q, S or O-branch with a value of 0, 2 or -2
+
         Returns
         -------
-        v: int
-            Vibrational quantum number
-        j: int
-            Rotational quantum number
-        branch: 0, int, optional
-            Q, S or O-branch with a value of 0, 2 or -2
         float
             Line position in wavenumber cm^(-1) for the given species at
             specified ro-vibrational levels
@@ -201,25 +204,25 @@ class LineStrength():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Translational (equilibrium) temperature of the measurement volume
             in [K].
-        v: int
+        v : int
             Vibrational quantum number.
-        j: int
+        j : int
             Rotational quantum number.
-        del_Tv: float
+        del_Tv : float
             The amount Tv exceeds Tr, by default 0.0.This is only used when
             stimulated Raman process competes with CARS and Tv becomes
             obviously higher than Tr.
-        vs: int, optional
+        vs : int, optional
             Total number of vibrational levels to be considered, by default 20.
-        js: int, optional
+        js : int, optional
             Total number of rotational levels to be considered, by default 100.
 
         Returns
         -------
-        fvj: float
+        fvj : float
             Population fraction of (v, j) state at the given temperature.
         """
         def Gj(j):
@@ -271,15 +274,15 @@ class LineStrength():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Translational (equilibrium) temperature of the measurement volume.
-        v: int
+        v : int
             Vibrational quantum number.
-        j: int or array of int
+        j : int or array of int
             Rotational quantum number. Recommended here to use an array if
             multiple j-levels need to be computed. This reduces the necessity
             of extra for-loops for j when synthesizing spectrum.
-        branch: int, optional
+        branch : int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0.
 
         Other Parameters
@@ -307,9 +310,9 @@ class LineStrength():
 
         Parameters
         ----------
-        temperature: float
+        temperature : float
             Translational (equilibrium) temperature of the measurement volume.
-        nu_0: float, optional
+        nu_0 : float, optional
             Transition center frequency, by default 2300 in
             [:math:`\mathrm{cm}^{-1}`]. It should actually be caclulated with
             ``line_pos`` for each single rotational transition. But to speed up
