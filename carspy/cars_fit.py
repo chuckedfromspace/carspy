@@ -29,7 +29,7 @@ def _ensureLmfit(function):
     return no_op
 
 
-def bg_removal(spec, bg=None, shots=1):
+def bg_removal(spec, bg=None):
     """Subtract background from spectrum and normalize it by its peak.
 
     Parameters
@@ -38,9 +38,6 @@ def bg_removal(spec, bg=None, shots=1):
         Spectrum.
     bg : None, 1d array, optional
         Background noise.
-    shots : 1, int, optional
-        Number of on CCD accumulated shots in the background. This is used for
-        removing background in single-shot measurements.
 
     Return
     ------
@@ -48,9 +45,9 @@ def bg_removal(spec, bg=None, shots=1):
         Background-subtracted, peak-normalized spectrum.
     """
     if bg is not None:
-        _spec = (spec - bg/shots).flatten()
+        _spec = (np.array(spec) - np.array(bg)).flatten()
     else:
-        _spec = spec.flatten()
+        _spec = np.array(spec).flatten()
 
     return _spec/_spec.max()
 
@@ -58,62 +55,107 @@ def bg_removal(spec, bg=None, shots=1):
 class CarsFit():
     """Fitting experimental CARS spectrum.
 
-    It can also be used to fit the laser linewidth or slit function.
+    .. note::
+        It can also be used to fit the laser linewidth or slit function.
+
     """
-    def __init__(self, spec_cars, spec_argon, nu_cal,
-                 bg_cars=None, bg_argon=None, modes=None, **kwargs):
-        """
-        Input measured CARS spectrum and its background.
+    def __init__(self, spec_cars, nu_spec, ref_fac=100., bg_cars=None,
+                 spec_stokes=None, bg_stokes=None, modes=None, **kwargs):
+        r"""Input measured CARS spectrum and its background.
 
         Parameters
         ----------
-        spec_cars : 1d array
+        spec_cars : 1d array of floats
             Measured CARS spectrum.
-        bg_cars : 1d array
-            Background noise taken when the lasers are blocked, with the same
-            optical alignment and the same camera setting (gain, gate).
-        spec_argon : 1d array
-            Measured Argon nonresonant spectrum for the correction of
-            Stokes profile.
-        bg_argon : 1d array
-            Background noise taken when the lasers are blocked, with the same
-            optical alignment and the same camera setting (gain, gate).
-        modes : None, dict, optional
-            A dictionary containing the modes used to perform the CARS fit.
+        nu_spec : 1d array of floats
+            Spectral range (axis) of the supplied CARS spectrum in
+            [:math:`\mathrm{cm}^{-1}`]. This can either be absolute values or
+            Raman shifted ones.
+        ref_fac : float
+            Refining factor based on the supplied spectral domain, by default
+            100. This factor is used in the fitting procedure to synthesize
+            spectra with much higher spectral resolution to be compared (after
+            downsampling) with the supplied (expt.) CARS spectrum. Higher value
+            will result in more accurate spectra at the cost of CPU time.
+        bg_cars : 1d array of floats
+            Background noise for the measured CARS spectrum.
+        spec_stokes : 1d array of floats
+            Measured broadband Stokes profile (usually with Ar), by default
+            None. If not supplied, it is assumed that `spec_cars` is already
+            corrected by the Stokes profile.
+        bg_stokes : 1d array of floats
+            Background noise for the measured Stokes profile.
+        modes : dict, optional
+            A dictionary containing the modes used to perform the CARS fit. By
+            default:
+
+            power_factor : 0
+                0 (fit I) or 1 (fit sqrt(I)).
+            downsample : 'local_mean'
+                Choose between 'local_mean' (highly efficient custom algorithm)
+                and 'interp' (interpolation with :mod:`numpy.interp`).
+            slit : 'Voigt'
+                Choose between (asymmetric) 'Voigt' and 'sGaussian' as the slit
+                impulse response function, see the documentations
+                for :mod:`carspy.convol_fcn.asym_Voigt` and
+                :mod:`carspy.convol_fcn.asym_Gaussian`.
+            pump_ls : 'Gaussian'
+                'Gaussian' or 'Lorentzian' laser lineshape.
+            chi_rs : 'G-matrix'
+                Choose between 'isolated' and 'G-matrix' for the consideration
+                of pressure effects.
+            convol : 'Kataoka'
+                'Kataoka'/'K' (double convolution) or 'Yuratich'/'Y' (single
+                convolution).
+            Doppler : True
+                Whether or not to consider Doppler effect on the Raman
+                lineshape.
+            chem_eq : False
+                Whether or not to assume chemical equilibrium during the fit.
+            fit : 'T_fit'
+                Type of build-in fitting setups: 'room_fit' or 'T_fit' for room
+                spectrum (for fitting slit function or laser linewidth) and
+                normal spectrum (with fixed slit/laser lineshape).
+
 
         Other Parameters
         ----------------
         **kwargs:
             This method also allows the keyword arguments found for
-            initializing ``CarsSpectrum``.
+            initializing :mod:`carspy.cars_synth.CarsSpectrum`.
         """
         # settings for the fit
         if modes is None:
-            self.modes = {'power_factor': 0,       # 1: fit sqrt(I)
-                          'downsample': 'local_mean',  # 'interp'
-                          'slit': 'Voigt',         # 'sGaussian'
-                          'pump_ls': 'Gaussian',   # 'Lorentzian'
-                          'chi_rs': 'G-matrix',    # 'isolated'
-                          'convol': 'Kataoka',     # 'Yuratich'
-                          'Doppler': True,         # Doppler broadening
+            self.modes = {'power_factor': 0,
+                          'downsample': 'local_mean',
+                          'slit': 'Voigt',
+                          'pump_ls': 'Gaussian',
+                          'chi_rs': 'G-matrix',
+                          'convol': 'Kataoka',
+                          'Doppler': True,
                           'chem_eq': False,
-                          'fit': 'room_fit',       # 'room_pump_fit', 'T_fit'
-                          'shots': 1               # on-CCD accumulation
+                          'fit': 'room_fit'
                           }
         else:
             self.modes = modes
 
-        # preprocessing the spectra
-        self.spec_cars = bg_removal(spec_cars, bg_cars,
-                                    shots=self.modes['shots'])
-        self.spec_argon = bg_removal(spec_argon, bg_argon)
+        # subtract background (optional) and normalize by max
+        self.spec_cars = bg_removal(spec_cars, bg_cars)
+        if spec_stokes is not None:
+            self.spec_stokes = bg_removal(spec_stokes, bg_stokes)
+            if len(self.spec_stokes) != len(self.spec_cars):
+                raise ValueError("The length of spec_cars needs to be "
+                                 "identical to that of spec_stok")
+        else:
+            self.spec_stokes = spec_stokes
 
-        # load the calibration results and extract the slit function
-        self.nu = nu_cal
+        # fixed properties
+        self.nu = nu_spec
+        self.ref_fac = ref_fac
 
         if len(self.nu) != len(self.spec_cars):
             raise ValueError('The length of spec_cars needs to be identical'
-                             'to that of the calibration spectrum')
+                             'to that of nu_spec')
 
         # setup CarsSpectrum
         self.spec_synth = CarsSpectrum(**kwargs)
@@ -121,50 +163,65 @@ class CarsFit():
         # define fit result
         self.fit_result = []
 
-    def preprocess(self, w_Stokes=592.1, nu_shift=0, crop=(140, 210),
-                   bg_subtract=False, bg_loc=(215, 225)):
-        """
-        Prepare the raw data for the fitting.
+    def preprocess(self, w_Stokes=0, nu_Stokes=0, crop=None,
+                   bg_subtract=False, bg_offset=0, bg_loc=None):
+        """Prepare the raw data for the fitting.
 
         Parameters
         ----------
-        w_Stokes : 591, float, optional
-            Center wavelength of the Stokes (e.g., dye laser) beam in nm.
-        nu_shift : 35.4, float, optional
-            A compensation to center the measured CARS spectrum correctly on a
-            relative spectral axis. This is determined from fitting room
-            temperature spectrum. [cm^-1]
-        crop : (145, 210), list, optional
-            Indices to crop the spectrum with. Needs to be adjusted based on
-            the experimental setup.
-        bg_subtract : False, bool, optional
-            If True, an extra offset determined within bg_loc is subtracted
-            from the spectrum.
-        bg_loc : (215, 225), list, optional
-            Indices to select the part of spectrum as background, only used if
-            bg_subtract is true. This is however not recommended as there
-            shouldn't be any physical background left if backgrounds are
-            subtracted already.
+        w_Stokes : float, optional
+            Center wavelength of the Stokes (e.g., dye laser) beam in [nm], by
+            default 0.
+        nu_shift : float, optional
+            Center wavenumber of the Stokes beam in [:math:`\mathrm{cm}^{-1}`],
+            by default 0.
+            In essence, `w_Stokes` and `nu_Stokes` are equivalent.
+        crop : list, optional
+            Two indices to crop the spectrum with, by default None. Needs to be
+            adjusted based on the experimental setup.
+        bg_subtract : bool, optional
+            If True, an extra offset specified by `bg_offset` or determined
+            within `bg_loc` is subtracted from the spectrum.
+            This is not recommended as there shouldn't be any physical
+            background left if backgrounds are subtracted properly from the
+            experimental spectrum beforehand. This might help if S/N is bad.
+            By default it is set to False.
+        bg_offset : float, optional
+            Value used as background to subtract, be default 0. This is ignored
+            if `bg_log` is provided.
+        bg_loc : list, optional
+            Two indices to select the part of spectrum as background, only used
+            if `bg_subtract` is True.
         """
         # remove very small values in the argon spectrum
-        self.spec_argon[self.spec_argon <= 1e-3] = 1e-3
-        self.spec_cars = self.spec_cars / self.spec_argon
+        if self.spec_stokes is not None:
+            self.spec_stokes[self.spec_stokes <= 1e-3] = 1e-3
+            self.spec_cars = self.spec_cars / self.spec_stokes
 
-        # extra background removal; The factor of 0.9 is purely empirical
-        _bg = self.spec_cars[bg_loc[0]:bg_loc[1]].mean()
-        if _bg > 0.008 or bg_subtract:
-            self.spec_cars = self.spec_cars - _bg*0.6
+        # extra background removal (USE WITH CAUTION)
+        if bg_subtract:
+            if bg_loc is not None:
+                _bg = self.spec_cars[bg_loc[0]:bg_loc[1]].mean()
+            else:
+                _bg = bg_offset
+            self.spec_cars = self.spec_cars - _bg
 
-        self.spec_cars[self.spec_cars < 0] = 0
+            self.spec_cars[self.spec_cars < 0] = 0
+
         # crop signal and spectral axis and re-normalize
-        self.spec_cars = self.spec_cars[crop[0]:crop[1]]**(
-            0.5**self.modes['power_factor'])
-        self.nu = self.nu[crop[0]:crop[1]]
+        if crop is not None:
+            self.spec_cars = self.spec_cars[crop[0]:crop[1]]
+            self.nu = self.nu[crop[0]:crop[1]]
+        # take the square root if 'power_factor' is 1
+        self.spec_cars = self.spec_cars**(0.5**self.modes['power_factor'])
         self.spec_cars = self.spec_cars/self.spec_cars.max()
 
         # convert the spectral axis to relative wavenumber to match
         # the CARS program
-        self.nu = self.nu - 1e7/w_Stokes + nu_shift
+        if w_Stokes != 0:
+            self.nu = self.nu - 1e7/w_Stokes
+        else:
+            self.nu = self.nu - nu_Stokes
 
     def cars_expt_synth(self, nu_expt, x_mol, temperature, del_Tv, nu_shift,
                         nu_stretch, pump_lw,
