@@ -59,8 +59,9 @@ class CarsFit():
         It can also be used to fit the laser linewidth or slit function.
 
     """
+
     def __init__(self, spec_cars, nu_spec, ref_fac=100., bg_cars=None,
-                 spec_stokes=None, bg_stokes=None, modes=None, **kwargs):
+                 spec_stokes=None, bg_stokes=None, fit_mode=None, **kwargs):
         r"""Input measured CARS spectrum and its background.
 
         Parameters
@@ -85,9 +86,9 @@ class CarsFit():
             corrected by the Stokes profile.
         bg_stokes : 1d array of floats
             Background noise for the measured Stokes profile.
-        modes : dict, optional
-            A dictionary containing the modes used to perform the CARS fit. By
-            default:
+        fit_mode : dict, optional
+            A dictionary containing the control parameters used to perform the
+            CARS fit. By default:
 
             power_factor : 0
                 0 (fit I) or 1 (fit sqrt(I)).
@@ -107,7 +108,7 @@ class CarsFit():
             convol : 'Kataoka'
                 'Kataoka'/'K' (double convolution) or 'Yuratich'/'Y' (single
                 convolution).
-            Doppler : True
+            doppler_effect : True
                 Whether or not to consider Doppler effect on the Raman
                 lineshape.
             chem_eq : False
@@ -125,19 +126,27 @@ class CarsFit():
             initializing :mod:`carspy.cars_synth.CarsSpectrum`.
         """
         # settings for the fit
-        if modes is None:
-            self.modes = {'power_factor': 0,
+        if fit_mode is None:
+            self.fit_mode = {'power_factor': 0,
                           'downsample': 'local_mean',
                           'slit': 'Voigt',
                           'pump_ls': 'Gaussian',
                           'chi_rs': 'G-matrix',
                           'convol': 'Kataoka',
-                          'Doppler': True,
+                          'doppler_effect': True,
                           'chem_eq': False,
                           'fit': 'room_fit'
                           }
         else:
-            self.modes = modes
+            self.fit_mode = fit_mode
+
+        # create subset of synth mode for CarsSpectrum
+        self.synth_mode = {'pump_ls': self.fit_mode['pump_ls'],
+                            'chi_rs': self.fit_mode['chi_rs'],
+                            'convol': self.fit_mode['convol'],
+                            'doppler_effect': self.fit_mode['doppler_effect'],
+                            'chem_eq': self.fit_mode['chem_eq'],
+                            }
 
         # subtract background (optional) and normalize by max
         self.spec_cars = bg_removal(spec_cars, bg_cars)
@@ -154,8 +163,8 @@ class CarsFit():
         self.ref_fac = ref_fac
 
         if len(self.nu) != len(self.spec_cars):
-            raise ValueError('The length of spec_cars needs to be identical'
-                             'to that of nu_spec')
+            raise ValueError("The length of spec_cars needs to be identical "
+                             "to that of nu_spec")
 
         # setup CarsSpectrum
         self.spec_synth = CarsSpectrum(**kwargs)
@@ -165,7 +174,7 @@ class CarsFit():
 
     def preprocess(self, w_Stokes=0, nu_Stokes=0, crop=None,
                    bg_subtract=False, bg_offset=0, bg_loc=None):
-        """Prepare the raw data for the fitting.
+        r"""Prepare the raw data for the fitting.
 
         Parameters
         ----------
@@ -213,7 +222,7 @@ class CarsFit():
             self.spec_cars = self.spec_cars[crop[0]:crop[1]]
             self.nu = self.nu[crop[0]:crop[1]]
         # take the square root if 'power_factor' is 1
-        self.spec_cars = self.spec_cars**(0.5**self.modes['power_factor'])
+        self.spec_cars = self.spec_cars**(0.5**self.fit_mode['power_factor'])
         self.spec_cars = self.spec_cars/self.spec_cars.max()
 
         # convert the spectral axis to relative wavenumber to match
@@ -226,24 +235,23 @@ class CarsFit():
     def cars_expt_synth(self, nu_expt, x_mol, temperature, del_Tv, nu_shift,
                         nu_stretch, pump_lw,
                         param1, param2, param3, param4):
-        """
+        r"""
         Synthesize a CARS spectrum based on the experimental spectral domain.
 
         Parameters
         ----------
         x_mol : float
-            Mole fraction of probed molecule within [0, 1].
+            Mole fraction of probed molecule.
         temperature : float
-            Temperature in the probe volume.
-        nu_expt : 1d array
-            Spectral axis of the experimental data.
+            Temperature in the probe volume in [K].
         nu_shift : float
-            Shift applied to nu to correctly center the spectrum.
+            Shift applied to correctly center the spectrum in
+            [:math:`\mathrm{cm}^{-1}`].
         nu_strech : float
             Strech applied to nu to compensate for incorrect dispersion
             calibration.
         pump_lw : float
-            Pump laser linewdith in cm^-1.
+            Pump laser linewdith in [:math:`\mathrm{cm}^{-1}`].
         del_Tv : float
             The amount vibrational temperature exceeds the rotational
             temperature.
@@ -260,7 +268,7 @@ class CarsFit():
         # shift the experimental spectral axis and refine it
         nu_expt = nu_expt*nu_stretch + nu_shift
         # using magnification to refine the grid
-        _fine_factor = 140
+        _fine_factor = self.ref_fac
         _del_nu = nu_expt[1] - nu_expt[0]
         _nu_expt_pad = np.pad(nu_expt, (5, 5), 'reflect', reflect_type='odd')
         nu_f = np.arange(start=_nu_expt_pad[0], stop=_nu_expt_pad[-1],
@@ -268,11 +276,11 @@ class CarsFit():
 
         # calculate the slit function
         nu_slit = []
-        if self.modes['slit'] == 'sGaussian':
+        if self.fit_mode['slit'] == 'sGaussian':
             nu_slit = asym_Gaussian(w=nu_f, w0=(nu_f[0]+nu_f[-1])/2,
                                     sigma=param1, k=param2,
                                     a_sigma=param3, a_k=param4, offset=0)
-        elif self.modes['slit'] == 'Voigt':
+        elif self.fit_mode['slit'] == 'Voigt':
             nu_slit = asym_Voigt(w=nu_f, w0=(nu_f[0]+nu_f[-1])/2,
                                  sigma_V_l=param1,
                                  sigma_V_h=param2, sigma_L_l=param3,
@@ -281,19 +289,14 @@ class CarsFit():
         _, I_as = self.spec_synth.signal_as(x_mol=x_mol,
                                             temperature=temperature, nu_s=nu_f,
                                             pump_lw=pump_lw, del_Tv=del_Tv,
-                                            pump_ls=self.modes['pump_ls'],
-                                            chi_rs_mode=self.modes['chi_rs'],
-                                            convol_mode=self.modes['convol'],
-                                            doppler_bd=self.modes['Doppler'],
-                                            chem_eq=self.modes['chem_eq'])
-
+                                            synth_mode=self.synth_mode)
         # convolute the slit function with the CARS spectrum
         I_as = np.convolve(I_as, nu_slit, 'same')
 
         # downsampling to the experimental spectral grid
         I_as_down = downsample(nu_expt, nu_f, I_as,
-                               mode=self.modes['downsample'])**(
-                                   0.5**self.modes['power_factor'])
+                               mode=self.fit_mode['downsample'])**(
+                                   0.5**self.fit_mode['power_factor'])
         return np.nan_to_num(I_as_down/I_as_down.max())
 
     @_ensureLmfit
@@ -313,7 +316,7 @@ class CarsFit():
         initi_params = []
 
         # different fitting modes
-        if self.modes['fit'] == 'room_fit':
+        if self.fit_mode['fit'] == 'room_fit':
             # fit slit and pump together at room T
             if None in (T_0, pump_lw):
                 raise ValueError(('Please provide measured room temperature'
@@ -329,10 +332,10 @@ class CarsFit():
                             ('param3', 1, True, 0, 20),
                             ('param4', 1, True, 0, 20))
 
-        if self.modes['fit'] == 'T_fit':
+        if self.fit_mode['fit'] == 'T_fit':
             if path_room_fit is None:
                 raise ValueError('Please provide path to (room_fit).pkl')
-            if self.modes['chem_eq']:
+            if self.fit_mode['chem_eq']:
                 x_mol_var = False
             else:
                 x_mol_var = True
@@ -348,6 +351,9 @@ class CarsFit():
                             ('param3', fit_params['param3'], False),
                             ('param4', fit_params['param4'], False))
 
+        if self.fit_mode['fit'] == 'custom':
+            initi_params = (('temperature', 2000, True, 250, 3000), )
+
         params = fit_model.make_params()
         params.add_many(*initi_params)
         if add_params is not None:
@@ -358,16 +364,10 @@ class CarsFit():
         if show_fit:
             report_fit(self.fit_result, show_correl=True, modelpars=params)
             self.fit_result.plot()
-            # plt.show()
-        # else:
-        #     print('Best-fit T=%.2f +/- %.2f' % (
-        #         self.fit_result.params['temperature'].value,
-        #         self.fit_result.params['temperature'].stderr))
 
     def save_fit(self, dir_save, file_name='room_fit'):
         """
-        Save the fitting results of room temperature CARS spectrum in
-        a dictionary.
+        Save the fitting results in a pickle file.
 
         Parameters
         ----------
