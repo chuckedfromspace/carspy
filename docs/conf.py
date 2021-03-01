@@ -39,7 +39,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.intersphinx',
               'sphinxcontrib.bibtex',
-              'numpydoc']
+              'numpydoc',
+              'myst_nb']
 
 bibtex_bibfiles = ['refs.bib']
 

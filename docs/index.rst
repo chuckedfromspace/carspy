@@ -9,7 +9,7 @@ Welcome
 
    readme
    installation
-   usage
+   examples
    contributing
 
 .. toctree::
