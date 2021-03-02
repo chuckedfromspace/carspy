@@ -19,6 +19,7 @@ def _ensureLmfit(function):
         @wraps(function)
         def wrapper(*args, **kwargs):
             return function(*args, **kwargs)
+        wrapper.__doc__ = function.__doc__
         return wrapper
 
     def no_op(*args, **kwargs):
