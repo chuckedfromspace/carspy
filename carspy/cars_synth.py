@@ -475,7 +475,7 @@ class CarsSpectrum():
         pump_lw : float, optional
             Pump laser linewdith (FWHM) in [:math:`\mathrm{cm}^{-1}`],
             by default None (i.e., no laser convolution is performed).
-        mode : dict, optional
+        synth_mode : dict, optional
             A dictionary containing the control parameters for creating the
             CARS spectrum, by default:
 

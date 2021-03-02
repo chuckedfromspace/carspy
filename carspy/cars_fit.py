@@ -128,25 +128,25 @@ class CarsFit():
         # settings for the fit
         if fit_mode is None:
             self.fit_mode = {'power_factor': 0,
-                          'downsample': 'local_mean',
-                          'slit': 'Voigt',
-                          'pump_ls': 'Gaussian',
-                          'chi_rs': 'G-matrix',
-                          'convol': 'Kataoka',
-                          'doppler_effect': True,
-                          'chem_eq': False,
-                          'fit': 'room_fit'
-                          }
+                             'downsample': 'local_mean',
+                             'slit': 'Voigt',
+                             'pump_ls': 'Gaussian',
+                             'chi_rs': 'G-matrix',
+                             'convol': 'Kataoka',
+                             'doppler_effect': True,
+                             'chem_eq': False,
+                             'fit': 'room_fit'
+                             }
         else:
             self.fit_mode = fit_mode
 
         # create subset of synth mode for CarsSpectrum
         self.synth_mode = {'pump_ls': self.fit_mode['pump_ls'],
-                            'chi_rs': self.fit_mode['chi_rs'],
-                            'convol': self.fit_mode['convol'],
-                            'doppler_effect': self.fit_mode['doppler_effect'],
-                            'chem_eq': self.fit_mode['chem_eq'],
-                            }
+                           'chi_rs': self.fit_mode['chi_rs'],
+                           'convol': self.fit_mode['convol'],
+                           'doppler_effect': self.fit_mode['doppler_effect'],
+                           'chem_eq': self.fit_mode['chem_eq'],
+                           }
 
         # subtract background (optional) and normalize by max
         self.spec_cars = bg_removal(spec_cars, bg_cars)
