@@ -10,9 +10,9 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: "__token__"
+  user: __token__
   password:
-    secure:
+    secure: PbQLqZFrC99rEPieEujylQ4H8cy/tdHjbv6I2MpvmoUGjyDF7iwrLLXwY//LIipPu5XaRUAf+NKjHkhfF96sz9GpQHOs7XDeb5RLLBUO+1V8+a2yiNgpVZilN8ypveZ06noC3+x0JbIgkBYvM7HZGX6O5CLRURW01exoj7uubDlZMf4nKI8/S5zQV2c9EL62CtPw/sNwQuiKO0wC4LEwNLf/2E3sQL0KGo4+JRrDn1YirGeLXwZBh7qpVCr1caJUApOndXtaQwkmraG0CTSMNOvvKE1F/F/OtjmYnZNOPM7VtnW5AsfGwq7kelhVi4Bpa63U1q/CJx62TPvPSAaim7BO+OweJZJ0nxYVpsD+7uObORW2nO6cFMSdNQrA+dN3Us3KYxDsGDUcB80nGBJ6520BIDI0v+amjBwHzk94dsixWE7n4kxKoOtqWVlFf71zpzBNUUX+LNwo923JDt4tTe1ZX0c65lYR/eUCZKSYzpus39xftW5+a06GWOwsuz++g/y6lOtS9yLS53Ij4ZXK6WEDC1ZBRs9RieLG94I9jBj4/gFkmIeQhINDcmi/B+7fmQylrgYO8hskPUO2Fw7oXgyjTnieXP7Z4+kzXvtI/mioEnxWR1+pk+PUTMxOFLfPazE3L0p6VyqsovV9hUKVlD4oiXEipZa3orvPxnypwG8=
   on:
     tags: true
     repo: chuckedfromspace/carspy
