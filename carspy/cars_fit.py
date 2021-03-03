@@ -27,6 +27,7 @@ def _ensureLmfit(function):
                     "least-square fit. Please install lmfit first or build "
                     "custom fit routines based on cars_expt_sync().")
         raise Exception(_message)
+    no_op.__doc__ = function.__doc__
     return no_op
 
 

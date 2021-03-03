@@ -23,6 +23,7 @@ def _ensureCantera(function):
                     "composition. Please install cantera first or specify "
                     "custom eq_func in signal_as() instead.")
         raise Exception(_message)
+    no_op.__doc__ = function.__doc__
     return no_op
 
 
@@ -32,7 +33,7 @@ def eq_comp(temperature, pressure, init_comp, valid_from=1200.):
     Calculate equilibrium composition at given temperature and pressure.
 
     .. attention::
-        This function is only intended as a "dumpy" template for setting up
+        This function is only intended as a "dummy" template for setting up
         custom equilibrium solvers with `cantera`. Please be aware of the
         applicabilities and uncertainties of various kinetic mechanisms.
 
