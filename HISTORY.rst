@@ -2,6 +2,13 @@
 Change Log
 ==========
 
+0.4.0 (2021-03-03)
+------------------
+
+* Implement least-square fitting routine with ``lmfit`` (optional).
+* Add documentations for the least-square fitting module.
+* Add usage examples for both synthesizing and fitting CARS spectra.
+
 0.3.0 (2021-02-25)
 ------------------
 
