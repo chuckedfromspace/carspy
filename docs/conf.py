@@ -39,7 +39,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.intersphinx',
               'sphinxcontrib.bibtex',
-              'numpydoc']
+              'numpydoc',
+              'myst_nb']
 
 bibtex_bibfiles = ['refs.bib']
 
@@ -47,11 +48,15 @@ bibtex_bibfiles = ['refs.bib']
 templates_path = ['_templates']
 
 # numpydoc settings
-# numpydoc_xref_param_type = True
-# numpydoc_xref_ignore = {'optional', 'type_without_description', 'BadException'}
 numpydoc_class_members_toctree = False
 numpydoc_show_class_members = False
 
+jupyter_execute_notebooks = "off"
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+    'numpy': ('https://numpy.org/devdocs/', None),
+}
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #

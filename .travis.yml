@@ -1,5 +1,6 @@
 language: python
 python:
+- 3.9
 - 3.8
 - 3.7
 - 3.6
@@ -9,9 +10,9 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: chuckedfromspace
+  user: __token__
   password:
-    secure: 34u3HuZEKbk+GP20GlY1c8Os5joqUgDKZJF8niZbHvdVgS/33tjsNn9xLaVArCkZcbeEfkUeGyfiWUrE+J/CKieIxFdKJsS2OJ+VWK73bQIZAz2IxzErxeIk5Qz1r8uEaa1iGVCfPF5egx6I9C6G/PFyhDPnc1/e8IZHTtGEQJsc19BW38EeTywNKL5VzSF0MqaZjpFqkRliDNAOYh3vsIz7jOa1ENiDeqorS/va8bcGlTTw/jDDUCkLvvUYjX4XOsyxdkp8CT/PkfcKEK6J5PXzhm2Z7nvK1YActKdpqXI9otw4ZXO/lvNv2uc5aQ2OjXUZJGNyJ4WAStEftg/WopNO9x4QAQBSucvehUPYv8fC/WZl24y4hHlToCe8ukCpcalj9/JeXLlFtCJT2K+8kzh7oT5QQKyBQuBQBzNHBHIyJyVG47ly3FzbSqJ7aNcwaCJI6T5hdeKWQu0ktcEfj7fe+OEfLovmhq7l6wCfYKyYAyyC1YdUKuKLbn9jn3tropz1TMrq2mPahg8GEqIl8xfyrIcxQEm9SByxJWhjCAHeg/0gPbNTaLo25AX9S7rD2ssB7plSZc1y61f6dhSMvRC9o+jIMy9m0Oh6eM9WUCGBLa0A9lUImyirddpiUg3qmKderpNvQQRMu5dCfHOKoYl9rrwMvCDYLzfH+u13WeI=
+    secure: PbQLqZFrC99rEPieEujylQ4H8cy/tdHjbv6I2MpvmoUGjyDF7iwrLLXwY//LIipPu5XaRUAf+NKjHkhfF96sz9GpQHOs7XDeb5RLLBUO+1V8+a2yiNgpVZilN8ypveZ06noC3+x0JbIgkBYvM7HZGX6O5CLRURW01exoj7uubDlZMf4nKI8/S5zQV2c9EL62CtPw/sNwQuiKO0wC4LEwNLf/2E3sQL0KGo4+JRrDn1YirGeLXwZBh7qpVCr1caJUApOndXtaQwkmraG0CTSMNOvvKE1F/F/OtjmYnZNOPM7VtnW5AsfGwq7kelhVi4Bpa63U1q/CJx62TPvPSAaim7BO+OweJZJ0nxYVpsD+7uObORW2nO6cFMSdNQrA+dN3Us3KYxDsGDUcB80nGBJ6520BIDI0v+amjBwHzk94dsixWE7n4kxKoOtqWVlFf71zpzBNUUX+LNwo923JDt4tTe1ZX0c65lYR/eUCZKSYzpus39xftW5+a06GWOwsuz++g/y6lOtS9yLS53Ij4ZXK6WEDC1ZBRs9RieLG94I9jBj4/gFkmIeQhINDcmi/B+7fmQylrgYO8hskPUO2Fw7oXgyjTnieXP7Z4+kzXvtI/mioEnxWR1+pk+PUTMxOFLfPazE3L0p6VyqsovV9hUKVlD4oiXEipZa3orvPxnypwG8=
   on:
     tags: true
     repo: chuckedfromspace/carspy

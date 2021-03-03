@@ -8,3 +8,5 @@ coverage==4.5.4
 Sphinx==3.4.3
 twine==1.14.0
 numpy>=1.19.4
+cantera>=2.5.0
+lmfit>=1.0.2

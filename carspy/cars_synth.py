@@ -284,7 +284,7 @@ class CarsSpectrum():
         return gamma_mat
 
     def peak_check(self, x_mol, temperature, v, j, branch=0, Gamma_j=None):
-        """Calculate the theoretical peak intensity.
+        r"""Calculate the theoretical peak intensity.
 
         This is done for the specified transition, assuming isolated lines.
 
@@ -308,8 +308,9 @@ class CarsSpectrum():
         branch : int, optional
             Q, S or O-branch with a value of 0, 2 or -2, by default 0.
         Gamma_j : float, optional
-            Raman linewidth, by default None. When not given, the value from
-            ``linewidth_isolated`` calculated.
+            Raman linewidth, by default None. When not given, the value will be
+            calculated from
+            :mod:`carspy.line_strength.linewidth_isolated`.
 
         Returns
         -------
@@ -474,7 +475,7 @@ class CarsSpectrum():
         pump_lw : float, optional
             Pump laser linewdith (FWHM) in [:math:`\mathrm{cm}^{-1}`],
             by default None (i.e., no laser convolution is performed).
-        mode : dict, optional
+        synth_mode : dict, optional
             A dictionary containing the control parameters for creating the
             CARS spectrum, by default:
 
@@ -500,7 +501,7 @@ class CarsSpectrum():
                 broadening.
             chem_eq : False
                 Whether or not to assume chemical equilibrium. If True, an
-                ``eq_func`` needs to be provided.
+                `eq_func` needs to be provided.
         eq_func : func, optional
                 A function used to calculate local gas composition based on
                 temperature and initial gas composition. Default is a simple

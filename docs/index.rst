@@ -9,7 +9,7 @@ Welcome
 
    readme
    installation
-   usage
+   examples
    contributing
 
 .. toctree::
@@ -18,6 +18,7 @@ Welcome
 
    line_strength
    cars_synth
+   cars_fit
    convol_fcn
    utils
 
