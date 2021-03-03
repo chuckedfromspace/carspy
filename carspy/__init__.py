@@ -6,4 +6,4 @@ from .utils import *
 
 __author__ = """Zhiyao Yin"""
 __email__ = 'zhiyao.yin@dlr.de'
-__version__ = '0.3.0'
+__version__ = '0.4.0'
