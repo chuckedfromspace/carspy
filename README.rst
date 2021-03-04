@@ -77,8 +77,9 @@ Features
 Highlights
 ----------
 
-* Option to incorporate equilibrium composition using an external chemical equilibrium calculator (such as ``cantera``), such that temperature is the only fitting parameter for thermometry
-* Vibrational and rotational nonequilibrium: vibrational temperature can be varied independently from rotational temperature
+* Readily extendable for species other than N2 and for other CARS setup other than typical broadband CARS.
+* Option to incorporate equilibrium composition using an external chemical equilibrium calculator (such as ``cantera``), such that temperature is the only fitting parameter for thermometry.
+* Vibrational and rotational nonequilibrium: vibrational temperature can be varied independently from rotational temperature.
 
 Comparisons with CARSFT
 -----------------------
@@ -107,11 +108,11 @@ Roadmap
 
 The above features currently present in the draft code will be gradually improved and included in the ``main`` branch. Here is a tentative plan:
 
-* (Implemented) Module for synthesizing CARS spectra (optional with ``cantera``)
-* (Short-term) Module for least-square fit (with ``lmfit``)
+* (Done) Module for synthesizing CARS spectra (optional with ``cantera``)
+* (Done) Module for least-square fit (optional with ``lmfit``)
+* (Short-term) Module for least-square fit (optional with ``scipy``)
 * (Mid-term) Multiprocessing
-* (Mid-term) Docs
-* (Mid-term) Tutorials
+* (Mid-term) EMEG and XMEG for high-pressure combustion environments
 * (Long-term) Other common diatomic species
 * (Long-term) Dualpump/Wide CARS
 
