@@ -34,7 +34,7 @@ def eq_comp(temperature, pressure, init_comp, valid_from=1200.):
 
     .. attention::
         This function is only intended as a "dummy" template for setting up
-        custom equilibrium solvers with `cantera`. Please be aware of the
+        custom equilibrium solvers with ``cantera``. Please be aware of the
         applicabilities and uncertainties of various kinetic mechanisms.
 
     Parameters
