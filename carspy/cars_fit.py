@@ -115,10 +115,16 @@ class CarsFit():
                 lineshape.
             chem_eq : False
                 Whether or not to assume chemical equilibrium during the fit.
-            fit : 'T_fit'
-                Type of build-in fitting setups: 'room_fit' or 'T_fit' for room
-                spectrum (for fitting slit function or laser linewidth) and
-                normal spectrum (with fixed slit/laser lineshape).
+            fit : 'custom'
+                Type of build-in fitting setups: 'T_x' or 'custom'.
+
+                - 'T_x': fitting variables related to the experimental setup
+                  (e.g., spectrometer) are inheritted from an existing fit
+                  and fixed. Only temperature and species concentrations are
+                  by default allowed to vary.
+                - 'custom': all fitting variables need to be provided before a
+                  fit can process.
+                See :mod:`carspy.cars_fit.CarsFit.ls_fit` for details.
 
 
         Other Parameters
@@ -137,7 +143,7 @@ class CarsFit():
                              'convol': 'Kataoka',
                              'doppler_effect': True,
                              'chem_eq': False,
-                             'fit': 'room_fit'
+                             'fit': 'custom'
                              }
         else:
             self.fit_mode = fit_mode
@@ -242,6 +248,9 @@ class CarsFit():
 
         Parameters
         ----------
+        nu_expt : 1d array of floats
+            The spectral axis determined in the experiment. This is used as
+            the independent variable during the fit.
         x_mol : float
             Mole fraction of probed molecule.
         temperature : float
@@ -302,60 +311,94 @@ class CarsFit():
         return np.nan_to_num(I_as_down/I_as_down.max())
 
     @_ensureLmfit
-    def ls_fit(self, T_0=None, pump_lw=None, path_room_fit=None,
-               show_fit=False, add_params=None):
+    def ls_fit(self, add_params=None, path_fit=None, show_fit=False):
         """
         Fitting the experimental CARS spectrum.
 
+        .. attention::
+            The least-quare fit module ``lmfit`` is necessary for this method.
+            Please be aware that certain Python versions may not be supported
+            by ``lmfit``. For displaying the fit results ``matplotlib`` will be
+            needed as well.
+
         Parameters
         ----------
-        show_fit : False, bool, optional
-            If True, the fitting results will be reported and plotted
-            as per lmfit.
+        add_params : nested tuple, optional
+            List of parameters controlling the fitting process. This option can
+            be used to modify these initial parameters:
+
+            .. code-block:: python
+
+                (('temperature', 2000, True, 250, 3000),
+                 ('del_Tv', 0, False),
+                 ('x_mol', 0.6, x_mol_var, 0.2, 1.5),
+                 ('nu_shift', fit_params['nu_shift'], False),
+                 ('nu_stretch', fit_params['nu_stretch'], False),
+                 ('pump_lw', fit_params['pump_lw'], False),
+                 ('param1', fit_params['param1'], False),
+                 ('param2', fit_params['param2'], False),
+                 ('param3', fit_params['param3'], False),
+                 ('param4', fit_params['param4'], False))
+            Each element of the nested tuple has the following element in
+            order:
+                variable_name : str
+                    All the arguments of
+                    :mod:`carspy.cars_fit.CarsFit.cars_expt_synth`
+                    are admissible variables except for the independent
+                    variable `nu_expt`.
+                initial_guess : float
+                    Initial guess or fixed value set for this variable.
+                variable : bool
+                    Determine if the variable is fixed (False) or not (True)
+                    during the fit.
+                lower_bound : float
+                    Lower boundary for the fitting variable. If not provided,
+                    negative infinity will be assumed.
+                upper_bound : float
+                    Upper boundary for the fitting variable. If not provide,
+                    positive infinity will be assumed.
+            For more details refer to the documentation of ``lmfit.Model``.
+        path_room_fit : str or :mod:`pathlib.Path` object
+            Path to the `.pkl` file of fitting result created by
+            :mod:`carspy.cars_fit.CarsFit.save_fit`. This allows importing
+            the fitting result of an existing spectrum, such that the inferred
+            values of certain parameters (such as those related to the
+            spectrometer) could be re-used in the next fit. A standard use case
+            for this would be the fitting result of a room-temperature
+            spectrum. This is needed if the `fit` in `fit_mode` of
+            :mod:`carspy.cars_fit.CarsFit` is set to `T_x`.
+        show_fit : bool, optional
+            If True, the fitting results will be reported and plotted. This is
+            done via built-in functions in ``lmfit``.
         """
         # general setup
         fit_model = Model(self.cars_expt_synth, independent_vars=['nu_expt'])
         initi_params = []
-
         # different fitting modes
-        if self.fit_mode['fit'] == 'room_fit':
-            # fit slit and pump together at room T
-            if None in (T_0, pump_lw):
-                raise ValueError(('Please provide measured room temperature'
-                                  'and pump linewidth in ls_fit()'))
-            initi_params = (('temperature', T_0, False),
-                            ('del_Tv', 0, False, 0, 300),
-                            ('x_mol', 0.79, False),
-                            ('nu_shift', 0, True, -3, 3),
-                            ('nu_stretch', 1, False, 0.5, 1.5),
-                            ('pump_lw', pump_lw, False, 0.1, 1),
-                            ('param1', 8, True, 0.01, 20),
-                            ('param2', 8, True, 0, 20),
-                            ('param3', 1, True, 0, 20),
-                            ('param4', 1, True, 0, 20))
-
-        if self.fit_mode['fit'] == 'T_fit':
-            if path_room_fit is None:
-                raise ValueError('Please provide path to (room_fit).pkl')
+        if self.fit_mode['fit'] == 'T_x':
+            if path_fit is None:
+                raise ValueError("Please provide path to a .pkl file "
+                                 "containing the fitting result of a spectrum")
             if self.fit_mode['chem_eq']:
                 x_mol_var = False
             else:
                 x_mol_var = True
-            fit_params = pkl_load(path_room_fit).params
+            fit_params = pkl_load(path_fit).params
             initi_params = (('temperature', 2000, True, 250, 3000),
-                            ('del_Tv', 0, False, 0, 500),
+                            ('del_Tv', 0, False),
                             ('x_mol', 0.6, x_mol_var, 0.2, 1.5),
-                            ('nu_shift', fit_params['nu_shift'], False, -3, 3),
-                            ('nu_stretch', 1, False, 0.5, 1.5),
-                            ('pump_lw', fit_params['pump_lw'], False, 0.1, 10),
+                            ('nu_shift', fit_params['nu_shift'], False),
+                            ('nu_stretch', fit_params['nu_stretch'], False),
+                            ('pump_lw', fit_params['pump_lw'], False),
                             ('param1', fit_params['param1'], False),
                             ('param2', fit_params['param2'], False),
                             ('param3', fit_params['param3'], False),
                             ('param4', fit_params['param4'], False))
 
         if self.fit_mode['fit'] == 'custom':
-            initi_params = (('temperature', 2000, True, 250, 3000), )
-
+            if add_params is None:
+                raise ValueError("Please specify fitting parameters first "
+                                 "using add_params")
         params = fit_model.make_params()
         params.add_many(*initi_params)
         if add_params is not None:
