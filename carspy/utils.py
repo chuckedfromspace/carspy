@@ -124,10 +124,8 @@ def pkl_dump(path_write, data):
 
     Parameters
     ----------
-    dir_save : dir
-        A valid directory in the system.
-    name_data : str
-        The full name of the file to be saved.
+    path_write : path
+        Absolute path to the pickle file to be created.
     data: python object
     """
     with open(path_write, 'wb') as pf:
@@ -139,10 +137,8 @@ def pkl_load(path_load):
 
     Parameters
     ----------
-    dir_save : dir
-        A valid directory in the system.
-    name_data : str
-        The full name of the file to be loaded.
+    dir_save : path
+        Absolute path to the pickle file to be loaded.
     """
     with open(path_load, 'rb') as pf:
         data = pickle.load(pf)

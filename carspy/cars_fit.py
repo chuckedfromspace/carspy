@@ -410,16 +410,16 @@ class CarsFit():
             report_fit(self.fit_result, show_correl=True, modelpars=params)
             self.fit_result.plot()
 
-    def save_fit(self, dir_save, file_name='room_fit'):
+    def save_fit(self, dir_save, file_name):
         """
         Save the fitting results in a pickle file.
 
         Parameters
         ----------
-        dir_save : str
-            Path for saving the data.
-        file_name : 'room_fit', str, optional
-            Name of the file to be saved.
+        dir_save : path
+            A valid local directory.
+        file_name : str
+            File name of the pickle file to be saved.
         """
         path_write = Path(dir_save) / (file_name + '.pkl')
         pkl_dump(path_write, self.fit_result)
