@@ -311,7 +311,7 @@ class CarsFit():
         return np.nan_to_num(I_as_down/I_as_down.max())
 
     @_ensureLmfit
-    def ls_fit(self, add_params=None, path_fit=None, show_fit=False):
+    def ls_fit(self, add_params=None, path_fit=None, show_fit=False, **kwargs):
         """
         Fitting the experimental CARS spectrum.
 
@@ -404,7 +404,7 @@ class CarsFit():
         if add_params is not None:
             params.add_many(*add_params)
         self.fit_result = fit_model.fit(np.nan_to_num(self.spec_cars), params,
-                                        nu_expt=self.nu)
+                                        nu_expt=self.nu, **kwargs)
 
         if show_fit:
             report_fit(self.fit_result, show_correl=True, modelpars=params)
