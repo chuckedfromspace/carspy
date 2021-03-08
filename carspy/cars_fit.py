@@ -223,7 +223,7 @@ class CarsFit():
                 _bg = bg_offset
             self.spec_cars = self.spec_cars - _bg
 
-            self.spec_cars[self.spec_cars < 0] = 0
+        self.spec_cars[self.spec_cars < 0] = 0
 
         # crop signal and spectral axis and re-normalize
         if crop is not None:
