@@ -279,7 +279,7 @@ class CarsSpectrum():
 
         # Calculate the diagonal
         for _i in range(js):
-            gamma_mat[_i, _i] = -sum(gamma_mat[:, _i])
+            gamma_mat[_i, _i] = -np.sum(gamma_mat[:, _i])
 
         return gamma_mat
 
