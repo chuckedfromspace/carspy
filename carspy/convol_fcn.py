@@ -112,6 +112,19 @@ def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
     return response/response.max()
 
 
+def asym_Voigt_mod(w, w0, sigma, k, a_sigma, a_k,
+                   sigma_L_l, sigma_L_h, offset):
+
+    response_low = np.exp(-abs((w-w0)/(sigma-a_sigma))**(k-a_k))
+    response_high = np.exp(-abs((w-w0)/(sigma+a_sigma))**(k+a_k))
+    response_low = np.convolve(response_low, lorentz_line(w, w0, sigma_L_l), 'same')
+    response_high = np.convolve(response_high, lorentz_line(w, w0, sigma_L_h), 'same')
+
+    response = np.append(response_low[np.where(w <= w0)],
+                         response_high[np.where(w > w0)]) + offset
+
+    return response/response.max()
+
 def asym_Voigt(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h, offset):
     """Asymmetric Voigt profile following NRC.
 
@@ -149,6 +162,7 @@ def asym_Voigt(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h, offset):
 
 
 def slit_ISRF(w, w0, param_1, param_2, param_3, param_4, offset,
+              param_5, param_6,
               mode='sGaussian'):
     """Impulse spectral response function (ISRF) as the slit function.
 
@@ -201,5 +215,8 @@ def slit_ISRF(w, w0, param_1, param_2, param_3, param_4, offset,
     elif mode == 'Voigt':
         slit_fc = asym_Voigt(w, w0, param_1, param_2, param_3,
                              param_4, offset)
+    else:
+        slit_fc = asym_Voigt_mod(w, w0, param_1, param_2, param_3, param_4,
+                                 param_5, param_6, offset)
 
     return slit_fc

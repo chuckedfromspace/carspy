@@ -3,7 +3,7 @@ from pathlib import Path
 from functools import wraps
 import numpy as np
 from .cars_synth import CarsSpectrum
-from .convol_fcn import asym_Gaussian, asym_Voigt
+from .convol_fcn import asym_Gaussian, asym_Voigt, asym_Voigt_mod
 from .utils import pkl_dump, pkl_load, downsample
 
 try:
@@ -242,7 +242,7 @@ class CarsFit():
 
     def cars_expt_synth(self, nu_expt, x_mol, temperature, del_Tv, nu_shift,
                         nu_stretch, pump_lw,
-                        param1, param2, param3, param4):
+                        param1, param2, param3, param4, param5, param6):
         r"""
         Synthesize a CARS spectrum based on the experimental spectral domain.
 
@@ -296,6 +296,11 @@ class CarsFit():
                                  sigma_V_l=param1,
                                  sigma_V_h=param2, sigma_L_l=param3,
                                  sigma_L_h=param4, offset=0)
+        else:
+            nu_slit = asym_Voigt_mod(w=nu_f, w0=(nu_f[0]+nu_f[-1])/2,
+                                 sigma=param1, k=param2,
+                                 a_sigma=param3, a_k=param4, offset=0,
+                                 sigma_L_l=param5, sigma_L_h=param6)
         # calculate the CARS spectrum
         _, I_as = self.spec_synth.signal_as(x_mol=x_mol,
                                             temperature=temperature, nu_s=nu_f,
@@ -311,7 +316,8 @@ class CarsFit():
         return np.nan_to_num(I_as_down/I_as_down.max())
 
     @_ensureLmfit
-    def ls_fit(self, add_params=None, path_fit=None, show_fit=False, **kwargs):
+    def ls_fit(self, add_params=None, path_fit=None, show_fit=False,
+               eval_only=False, **kwargs):
         """
         Fitting the experimental CARS spectrum.
 
@@ -403,12 +409,17 @@ class CarsFit():
         params.add_many(*initi_params)
         if add_params is not None:
             params.add_many(*add_params)
-        self.fit_result = fit_model.fit(np.nan_to_num(self.spec_cars), params,
-                                        nu_expt=self.nu, **kwargs)
 
-        if show_fit:
-            report_fit(self.fit_result, show_correl=True, modelpars=params)
-            self.fit_result.plot()
+        if eval_only:
+            return fit_model.eval(params, nu_expt=self.nu)
+        else:
+
+            self.fit_result = fit_model.fit(np.nan_to_num(self.spec_cars), params,
+                                            nu_expt=self.nu, **kwargs)
+
+            if show_fit:
+                report_fit(self.fit_result, show_correl=True, modelpars=params)
+                self.fit_result.plot()
 
     def save_fit(self, dir_save, file_name):
         """
