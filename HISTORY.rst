@@ -2,6 +2,11 @@
 Change Log
 ==========
 
+0.4.1 (2021-03-10)
+------------------
+
+* Implement an asymmetric "super" Voigt function for better fitting slit function.
+
 0.4.0 (2021-03-03)
 ------------------
 
