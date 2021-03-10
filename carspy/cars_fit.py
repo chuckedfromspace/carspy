@@ -101,7 +101,8 @@ class CarsFit():
                 Choose between (asymmetric) 'sVoigt' and 'sGaussian' as the
                 slit impulse response function, see the documentations
                 for :mod:`carspy.convol_fcn.asym_Voigt` and
-                :mod:`carspy.convol_fcn.asym_Gaussian`.
+                :mod:`carspy.convol_fcn.asym_Gaussian`. 'sGaussian' will be
+                deprecated in future updates.
             pump_ls : 'Gaussian'
                 'Gaussian' or 'Lorentzian' laser lineshape.
             chi_rs : 'G-matrix'
@@ -362,7 +363,7 @@ class CarsFit():
                     Upper boundary for the fitting variable. If not provide,
                     positive infinity will be assumed.
             For more details refer to the documentation of ``lmfit.Model``.
-        path_room_fit : str or :mod:`pathlib.Path` object
+        path_fit : str
             Path to the `.pkl` file of fitting result created by
             :mod:`carspy.cars_fit.CarsFit.save_fit`. This allows importing
             the fitting result of an existing spectrum, such that the inferred
