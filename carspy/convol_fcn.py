@@ -112,21 +112,63 @@ def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
     return response/response.max()
 
 
-def asym_Voigt_mod(w, w0, sigma, k, a_sigma, a_k,
-                   sigma_L_l, sigma_L_h, offset):
+def asym_Voigt(w, w0, sigma, k, a_sigma, a_k, sigma_L_l, sigma_L_h, offset):
+    """Asymmetric super-Voigt.
 
+    .. note::
+
+        This is based on the super-Gaussian from :cite:`Beirle:17`, with
+        additional convolution with two Lorentzian profiles to better capture
+        slow-decaying wings in some experimental slit function
+
+    Parameters
+    ----------
+    w : sorted 1d array of floats
+        Spectral positions in wavenumber cm^(-1).
+    w0 : float
+        Center of the asymmetric Gaussian function in wavenumber cm^(-1).
+    sigma : float
+        FWHM of the Gaussian function in wavenumber cm^(-1).
+    k : float
+        Controls the skewing of the asymmetry.
+    a_sigma, a_k : float
+        Tuning factors for sigma and k.
+    sigma_L_l : float
+        FWHM of the Lorentzian function in wavenumber cm^(-1) for the
+        lower half.
+    sigma_L_h : float
+        FWHM of the Lorentzian function in wavenumber cm^(-1) for the
+        higher half.
+    offset : float
+        Background offset.
+
+    Returns
+    -------
+    1d array of floats
+        Intensities of the peak-normalized asymmetric super-Gaussian over w.
+    """
     response_low = np.exp(-abs((w-w0)/(sigma-a_sigma))**(k-a_k))
     response_high = np.exp(-abs((w-w0)/(sigma+a_sigma))**(k+a_k))
-    response_low = np.convolve(response_low, lorentz_line(w, w0, sigma_L_l), 'same')
-    response_high = np.convolve(response_high, lorentz_line(w, w0, sigma_L_h), 'same')
+    response_low = np.convolve(response_low, lorentz_line(w, w0, sigma_L_l),
+                               'same')
+    response_high = np.convolve(response_high, lorentz_line(w, w0, sigma_L_h),
+                                'same')
 
     response = np.append(response_low[np.where(w <= w0)],
                          response_high[np.where(w > w0)]) + offset
 
     return response/response.max()
 
-def asym_Voigt(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h, offset):
+
+def asym_Voigt_deprecated(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h,
+                          offset):
     """Asymmetric Voigt profile following NRC.
+
+    .. admonition:: Deprecated
+       :class: attention
+
+       This profile cannot capture certain slit functions with broadened
+       Gaussian profile.
 
     Parameters
     ----------
@@ -161,9 +203,8 @@ def asym_Voigt(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h, offset):
     return response/response.max()
 
 
-def slit_ISRF(w, w0, param_1, param_2, param_3, param_4, offset,
-              param_5, param_6,
-              mode='sGaussian'):
+def slit_ISRF(w, w0, param_1, param_2, param_3, param_4, param_5, param_6,
+              offset, mode='sGaussian'):
     """Impulse spectral response function (ISRF) as the slit function.
 
     Parameters
@@ -213,10 +254,7 @@ def slit_ISRF(w, w0, param_1, param_2, param_3, param_4, offset,
         slit_fc = asym_Gaussian(w, w0, param_1, param_2, param_3,
                                 param_4, offset)
     elif mode == 'Voigt':
-        slit_fc = asym_Voigt(w, w0, param_1, param_2, param_3,
-                             param_4, offset)
-    else:
-        slit_fc = asym_Voigt_mod(w, w0, param_1, param_2, param_3, param_4,
-                                 param_5, param_6, offset)
+        slit_fc = asym_Voigt(w, w0, param_1, param_2, param_3, param_4,
+                             param_5, param_6, offset)
 
     return slit_fc

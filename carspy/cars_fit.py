@@ -3,7 +3,7 @@ from pathlib import Path
 from functools import wraps
 import numpy as np
 from .cars_synth import CarsSpectrum
-from .convol_fcn import asym_Gaussian, asym_Voigt, asym_Voigt_mod
+from .convol_fcn import asym_Gaussian, asym_Voigt
 from .utils import pkl_dump, pkl_load, downsample
 
 try:
@@ -97,9 +97,9 @@ class CarsFit():
             downsample : 'local_mean'
                 Choose between 'local_mean' (highly efficient custom algorithm)
                 and 'interp' (interpolation with :mod:`numpy.interp`).
-            slit : 'Voigt'
-                Choose between (asymmetric) 'Voigt' and 'sGaussian' as the slit
-                impulse response function, see the documentations
+            slit : 'sVoigt'
+                Choose between (asymmetric) 'sVoigt' and 'sGaussian' as the
+                slit impulse response function, see the documentations
                 for :mod:`carspy.convol_fcn.asym_Voigt` and
                 :mod:`carspy.convol_fcn.asym_Gaussian`.
             pump_ls : 'Gaussian'
@@ -266,7 +266,7 @@ class CarsFit():
         del_Tv : float
             The amount vibrational temperature exceeds the rotational
             temperature.
-        param1, param2, param3, param4 : float
+        param1, param2, param3, param4, param5, param6 : float
             Fitting parameters for the slit function
 
         Return
@@ -291,16 +291,12 @@ class CarsFit():
             nu_slit = asym_Gaussian(w=nu_f, w0=(nu_f[0]+nu_f[-1])/2,
                                     sigma=param1, k=param2,
                                     a_sigma=param3, a_k=param4, offset=0)
-        elif self.fit_mode['slit'] == 'Voigt':
+        elif self.fit_mode['slit'] == 'sVoigt':
             nu_slit = asym_Voigt(w=nu_f, w0=(nu_f[0]+nu_f[-1])/2,
-                                 sigma_V_l=param1,
-                                 sigma_V_h=param2, sigma_L_l=param3,
-                                 sigma_L_h=param4, offset=0)
-        else:
-            nu_slit = asym_Voigt_mod(w=nu_f, w0=(nu_f[0]+nu_f[-1])/2,
                                  sigma=param1, k=param2,
-                                 a_sigma=param3, a_k=param4, offset=0,
-                                 sigma_L_l=param5, sigma_L_h=param6)
+                                 a_sigma=param3, a_k=param4,
+                                 sigma_L_l=param5, sigma_L_h=param6,
+                                 offset=0)
         # calculate the CARS spectrum
         _, I_as = self.spec_synth.signal_as(x_mol=x_mol,
                                             temperature=temperature, nu_s=nu_f,
@@ -344,7 +340,9 @@ class CarsFit():
                  ('param1', fit_params['param1'], False),
                  ('param2', fit_params['param2'], False),
                  ('param3', fit_params['param3'], False),
-                 ('param4', fit_params['param4'], False))
+                 ('param4', fit_params['param4'], False),
+                 ('param5', fit_params['param5'], False),
+                 ('param6', fit_params['param6'], False))
             Each element of the nested tuple has the following element in
             order:
                 variable_name : str
@@ -399,7 +397,9 @@ class CarsFit():
                             ('param1', fit_params['param1'], False),
                             ('param2', fit_params['param2'], False),
                             ('param3', fit_params['param3'], False),
-                            ('param4', fit_params['param4'], False))
+                            ('param4', fit_params['param4'], False),
+                            ('param5', fit_params['param5'], False),
+                            ('param6', fit_params['param6'], False))
 
         if self.fit_mode['fit'] == 'custom':
             if add_params is None:
@@ -413,8 +413,8 @@ class CarsFit():
         if eval_only:
             return fit_model.eval(params, nu_expt=self.nu)
         else:
-
-            self.fit_result = fit_model.fit(np.nan_to_num(self.spec_cars), params,
+            self.fit_result = fit_model.fit(np.nan_to_num(self.spec_cars),
+                                            params,
                                             nu_expt=self.nu, **kwargs)
 
             if show_fit:
