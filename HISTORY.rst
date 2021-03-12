@@ -2,6 +2,11 @@
 Change Log
 ==========
 
+0.4.2 (2021-03-12)
+------------------
+
+* Add missing json data files to the package.
+
 0.4.1 (2021-03-10)
 ------------------
 
