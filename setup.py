@@ -41,6 +41,7 @@ setup(
     keywords='carspy',
     name='carspy',
     packages=find_packages(include=['carspy', 'carspy.*']),
+    package_data={'carspy': ['_constants/*.json']},
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
