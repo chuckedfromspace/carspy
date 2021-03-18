@@ -110,9 +110,9 @@ The above features currently present in the draft code will be gradually improve
 
 * (Done) Module for synthesizing CARS spectra (optional with ``cantera``)
 * (Done) Module for least-square fit (optional with ``lmfit``)
-* (Short-term) Module for least-square fit (optional with ``scipy``)
-* (Mid-term) Multiprocessing
+* (Done) Parallel processing example with ``joblib``
 * (Mid-term) EMEG and XMEG for high-pressure combustion environments
+* (Long-term) Enrich documentation
 * (Long-term) Other common diatomic species
 * (Long-term) Dualpump/Wide CARS
 
