@@ -63,6 +63,8 @@ To try out the basic functions of ``carspy``, head over to the `Live demo`_, whi
 .. _`Heroku`: https://devcenter.heroku.com/
 .. _`carspy app repository`: https://github.com/chuckedfromspace/carspy-dash
 
+.. image:: https://raw.githubusercontent.com/chuckedfromspace/carspy-dash/main/assets/demo1.gif
+
 Features
 --------
 
