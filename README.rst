@@ -22,9 +22,11 @@ Synthesizing and fitting coherent anti-Stokes Raman spectra in Python.
 
 * `Documentation`_
 * `Project homepage`_
+* `Live demo`_
 
 .. _`Documentation`: https://carspy.readthedocs.io
 .. _`Project homepage`: https://github.com/chuckedfromspace/carspy
+.. _`Live demo`: https://carspy.herokuapp.com
 
 Background
 ----------
@@ -51,6 +53,15 @@ Quick start
 See `installation guide`_ for alternative methods.
 
 .. _`installation guide`: https://carspy.readthedocs.io/en/latest/installation.html
+
+Live demo
+---------
+
+To try out the basic functions of ``carspy``, head over to the `Live demo`_, which is a webapp built with `Plotly/Dash`_ and hosted on `Heroku`_ to showcase how CARS spectrum could be synthesized and fitted with ``carspy``. The computation/loading speed is largely limited by the cloud server and Internet speed. For a much better performance, download or fork the `carspy app repository`_ and run the app locally.
+
+.. _`Plotly/Dash`: https://dash.plotly.com/
+.. _`Heroku`: https://devcenter.heroku.com/
+.. _`carspy app repository`: https://github.com/chuckedfromspace/carspy-dash
 
 Features
 --------
