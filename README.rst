@@ -63,7 +63,13 @@ To try out the basic functions of ``carspy``, head over to the `Live demo`_, whi
 .. _`Heroku`: https://devcenter.heroku.com/
 .. _`carspy app repository`: https://github.com/chuckedfromspace/carspy-dash
 
+* Synthesize CARS spectrum
+
 .. image:: https://raw.githubusercontent.com/chuckedfromspace/carspy-dash/main/assets/demo1.gif
+
+* Least-square-fit of a synthesized spectrum
+
+.. image:: https://raw.githubusercontent.com/chuckedfromspace/carspy-dash/main/assets/demo2.gif
 
 Features
 --------
