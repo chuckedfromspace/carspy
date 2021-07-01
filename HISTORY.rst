@@ -2,6 +2,11 @@
 Change Log
 ==========
 
+0.5.0 (2021-05-17)
+------------------
+
+* Add link to a standalone web application that demonstrates the basic functions for synthesizing CARS spectra
+
 0.4.2 (2021-03-12)
 ------------------
 

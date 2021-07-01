@@ -20,7 +20,7 @@ setup(
     author_email='zhiyao.yin@dlr.de',
     python_requires='>=3.5',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
         'License :: OSI Approved :: BSD License',
@@ -46,6 +46,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/chuckedfromspace/carspy',
-    version='0.4.2',
+    version='0.5.0',
     zip_safe=False,
 )
