@@ -59,6 +59,12 @@ def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
              eval_only=False, save_fit=False, dir_save=None, file_name=None):
     r"""fitting the experimental slit function with a chosen lineshape
 
+    .. attention::
+        It is recommended to always look for initial parameters by using the
+        `eval_only` option to roughly match the shape of the experimental slit
+        function. The built-in initial parameters may not work for all the
+        cases.
+
     Parameters
     ----------
     nu : 1d array of floats
