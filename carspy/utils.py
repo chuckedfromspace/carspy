@@ -133,7 +133,7 @@ def loc_lines(spec, height, w_peaks, peak_indices=None, inspect=True):
         A threshold for the peaks. Chose a value between 0 and 1.
     peak_indices : list of integer
         List of indices of peaks to use for calculating conversion factor.
-    w_peaks : list of floats
+    w_peaks : 1d array of floats
         List of targeted peaks in Angstrom.
     inpsect : bool, optional
         If true, the peaks will be displayed on top of the original spectrum.
