@@ -119,6 +119,22 @@ def comp_normalize(comp_dict, target=1.0):
     return {key: value*factor for key, value in comp_dict.items()}
 
 
+def loc_lines(height, peak_indices, w_peaks, inpsect=True):
+    """[summary]
+
+    Parameters
+    ----------
+    height : [type]
+        [description]
+    peak_indices : [type]
+        [description]
+    w_peaks : [type]
+        [description]
+    inpsect : bool, optional
+        [description], by default True
+    """
+
+
 def pkl_dump(path_write, data):
     """Dump data into a pickle file.
 
