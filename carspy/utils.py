@@ -2,6 +2,8 @@
 from functools import wraps
 import pickle
 import numpy as np
+from scipy.signal import find_peaks
+
 
 try:
     import cantera as ct
@@ -50,7 +52,7 @@ def eq_comp(temperature, pressure, init_comp, valid_from=1200.):
         1200 [K]. This value is by no means valid for all cases.
     """
     products = init_comp.copy()
-    if temperature > 1200:
+    if temperature > valid_from:
         gas = ct.Solution('gri30.xml')
         gas.TPX = temperature, pressure*1e5, init_comp
         gas.equilibrate('TP')
