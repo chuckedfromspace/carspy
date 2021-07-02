@@ -54,6 +54,74 @@ def bg_removal(spec, bg=None):
     return _spec/_spec.max()
 
 
+@_ensureLmfit
+def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
+             eval_only=False, save_fit=False, dir_save=None, file_name=None):
+    r"""fitting the experimental slit function with a chosen lineshape
+
+    Parameters
+    ----------
+    nu : 1d array of floats
+        Spectral positions in [:math:`\mathrm{cm}^{-1}`].
+    spec : 1d array of floats
+        Experimentally obtained slit function, usually an isolated atomic line
+        from a calibration lamp.
+    init_params : dict, optional
+        Initial fitting parameters for the lineshape. Refer to
+        :mod:`carspy.convol_fcn.asym_Voigt` and
+        :mod:`carspy.convol_fcn.asym_Gaussian` for the required arguments.
+    lineshape : str, optional
+        Type of the lineshape, by default 'sGaussian'. Choose between
+        'sGaussian' and 'sVoigt'.
+    eval_only : bool, optional
+        If true, returns the evaluation with given initial parameters.
+    save_fit : bool, optional
+        If true, fit results will be saved in a pickle file.
+    dir_save : str, optional
+        If `save_fit` is true, a string to the desired directory for saving.
+    file_name : str, optional
+        If `save_fit` is true, specify the file name without file extension.
+
+    Returns
+    -------
+    1d array
+        If `eval_only` is true, the evaluation result is returned.
+
+    """
+    if lineshape == 'sGaussian':
+        fit_model = Model(asym_Gaussian, independent_vars='w')
+    elif lineshape == 'sVoigt':
+        fit_model = Model(asym_Voigt, independent_vars='w')
+    else:
+        raise ValueError("Please choose between 'sGaussian' and 'sVoigt'")
+
+    if init_params is None:
+        init_params = (
+            ('w0', 0, True),
+            ('sigma', 2, True, 0.01, 10),
+            ('k', 2, True, 0, 10),
+            ('a_sigma', -0.8, True, -5, 5),
+            ('a_k', 1, True, -5, 5),
+            ('sigma_L_l', 0.1, True, 0.01, 5),
+            ('sigma_L_h', 0.1, True, 0.01, 5),
+            ('offset', 0, True, 0, 1)
+        )
+
+    params = fit_model.make_params()
+    params.add_many(*init_params)
+    if eval_only:
+        return fit_model.eval(params, nu=nu)
+    else:
+        fit_result = fit_model.fit(spec/spec.max(), params, w=nu)
+        report_fit(fit_result, show_correl=True, modelpars=params)
+        fit_result.plot()
+
+        if save_fit:
+            if dir_save and file_name:
+                path_write = Path(dir_save) / (file_name + '.pkl')
+                pkl_dump(path_write, fit_result)
+
+
 class CarsFit():
     """Fitting experimental CARS spectrum.
 
