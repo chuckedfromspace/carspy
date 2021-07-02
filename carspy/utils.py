@@ -3,6 +3,7 @@ from functools import wraps
 import pickle
 import numpy as np
 from scipy.signal import find_peaks
+import matplotlib.pyplot as plt
 
 
 try:
@@ -121,20 +122,45 @@ def comp_normalize(comp_dict, target=1.0):
     return {key: value*factor for key, value in comp_dict.items()}
 
 
-def loc_lines(height, peak_indices, w_peaks, inpsect=True):
+def loc_lines(spec, height, w_peaks, peak_indices=None, inspect=True):
     """[summary]
 
     Parameters
     ----------
-    height : [type]
-        [description]
-    peak_indices : [type]
-        [description]
-    w_peaks : [type]
-        [description]
+    spec : 1d array of floats
+        Spectrum containing distinct peaks.
+    height : float
+        A threshold for the peaks. Chose a value between 0 and 1.
+    peak_indices : list of integer
+        List of indices of peaks to use for calculating conversion factor.
+    w_peaks : list of floats
+        List of targeted peaks in Angstrom.
     inpsect : bool, optional
-        [description], by default True
+        If true, the peaks will be displayed on top of the original spectrum.
     """
+    peaks, _ = find_peaks(spec/spec.max(), height=height)
+    if inspect:  # Inspect the peak finding results
+        plt.plot(spec, 'k')
+        plt.plot(peaks, spec[peaks], 'ro')
+        plt.title('Close this window to continue the program')
+        plt.show()
+
+    if len(peaks) != len(w_peaks):
+        raise ValueError('Adjust height to find the correct number \
+                            of peaks (%d)' % (len(w_peaks),))
+
+    if peak_indices is None:
+        peak_indices = range(len(w_peaks))
+    elif len(peaks) < len(peak_indices):
+        raise ValueError('Number of indices exceed the peaks found.')
+
+    conv_factor = (np.diff(w_peaks[peak_indices])
+                   / np.diff(peaks[peak_indices]))
+    offset = (w_peaks - peaks*conv_factor.mean())[peak_indices]
+    # calculate spectral domain in nm
+    w = (np.arange(len(spec))*conv_factor.mean() + offset.mean())/10
+
+    return w, conv_factor, offset, peaks
 
 
 def pkl_dump(path_write, data):
