@@ -2,8 +2,29 @@
 from functools import wraps
 import pickle
 import numpy as np
-from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
+
+
+try:
+    from scipy.signal import find_peaks
+    _HAS_SCIPY = True
+except Exception:
+    _HAS_SCIPY = False
+
+
+def _ensureScipy(function):
+    if _HAS_SCIPY:
+        @wraps(function)
+        def wrapper(*args, **kwargs):
+            return function(*args, **kwargs)
+        wrapper.__doc__ = function.__doc__
+        return wrapper
+
+    def no_op(*args, **kwargs):
+        _message = ("Scipy module is required to carry out peak finding")
+        raise Exception(_message)
+    no_op.__doc__ = function.__doc__
+    return no_op
 
 
 try:
@@ -22,7 +43,7 @@ def _ensureCantera(function):
         return wrapper
 
     def no_op(*args, **kwargs):
-        _message = ("cantera module is required for calculating equilibrium "
+        _message = ("Cantera module is required for calculating equilibrium "
                     "composition. Please install cantera first or specify "
                     "custom eq_func in signal_as() instead.")
         raise Exception(_message)
@@ -122,6 +143,7 @@ def comp_normalize(comp_dict, target=1.0):
     return {key: value*factor for key, value in comp_dict.items()}
 
 
+@_ensureScipy
 def loc_lines(spec, height, w_peaks, peak_indices=None, inspect=True):
     """[summary]
 
