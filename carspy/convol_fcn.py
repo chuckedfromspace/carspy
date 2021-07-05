@@ -82,7 +82,7 @@ def voigt_line(w, w0, sigma_V, sigma_L):
     return _term_1 + _term_2
 
 
-def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
+def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset, power_factor=1.):
     """Asymmetric super-Gaussian following :cite:`Beirle:17`.
 
     Parameters
@@ -99,6 +99,8 @@ def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
         Tuning factors for sigma and k.
     offset : float
         Background offset (from experimental spectrum).
+    power_factor : float
+        Power factor on the output (e.g. can be used during slit fitting).
 
     Returns
     -------
@@ -107,12 +109,13 @@ def asym_Gaussian(w, w0, sigma, k, a_sigma, a_k, offset):
     """
     response_low = np.exp(-abs((w[w <= w0]-w0)/(sigma-a_sigma))**(k-a_k))
     response_high = np.exp(-abs((w[w > w0]-w0)/(sigma+a_sigma))**(k+a_k))
-    response = np.append(response_low, response_high) + offset
+    response = (np.append(response_low, response_high) + offset)**power_factor
 
-    return response/response.max()
+    return np.nan_to_num(response/response.max())
 
 
-def asym_Voigt(w, w0, sigma, k, a_sigma, a_k, sigma_L_l, sigma_L_h, offset):
+def asym_Voigt(w, w0, sigma, k, a_sigma, a_k, sigma_L_l, sigma_L_h, offset,
+               power_factor=1.):
     """Asymmetric super-Voigt.
 
     .. note::
@@ -141,6 +144,8 @@ def asym_Voigt(w, w0, sigma, k, a_sigma, a_k, sigma_L_l, sigma_L_h, offset):
         higher half.
     offset : float
         Background offset.
+    power_factor : float
+        Power factor on the output (e.g. can be used during slit fitting).
 
     Returns
     -------
@@ -154,10 +159,10 @@ def asym_Voigt(w, w0, sigma, k, a_sigma, a_k, sigma_L_l, sigma_L_h, offset):
     response_high = np.convolve(response_high, lorentz_line(w, w0, sigma_L_h),
                                 'same')
 
-    response = np.append(response_low[np.where(w <= w0)],
-                         response_high[np.where(w > w0)]) + offset
+    response = (np.append(response_low[np.where(w <= w0)],
+                response_high[np.where(w > w0)]) + offset)**power_factor
 
-    return response/response.max()
+    return np.nan_to_num(response/response.max())
 
 
 def asym_Voigt_deprecated(w, w0, sigma_V_l, sigma_V_h, sigma_L_l, sigma_L_h,

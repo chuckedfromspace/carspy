@@ -1,6 +1,6 @@
 """Least-square fit of experimental CARS spectra."""
 from pathlib import Path
-from functools import wraps
+from functools import wraps, partial
 import numpy as np
 from .cars_synth import CarsSpectrum
 from .convol_fcn import asym_Gaussian, asym_Voigt
@@ -56,7 +56,8 @@ def bg_removal(spec, bg=None):
 
 @_ensureLmfit
 def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
-             eval_only=False, save_fit=False, dir_save=None, file_name=None):
+             power_factor=1., eval_only=False,
+             save_fit=False, dir_save=None, file_name=None):
     r"""fitting the experimental slit function with a chosen lineshape
 
     .. attention::
@@ -95,11 +96,14 @@ def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
 
     """
     if lineshape == 'sGaussian':
-        fit_model = Model(asym_Gaussian, independent_vars='w')
+        slit_func = partial(asym_Gaussian, power_factor=power_factor)
     elif lineshape == 'sVoigt':
-        fit_model = Model(asym_Voigt, independent_vars='w')
+        slit_func = partial(asym_Voigt, power_factor=power_factor)
     else:
         raise ValueError("Please choose between 'sGaussian' and 'sVoigt'")
+    slit_func.__name__ = 'slit_func'
+
+    fit_model = Model(slit_func, independent_vars='w')
 
     if init_params is None:
         init_params = (
@@ -116,9 +120,10 @@ def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
     params = fit_model.make_params()
     params.add_many(*init_params)
     if eval_only:
-        return fit_model.eval(params, nu=nu)
+        return fit_model.eval(params, w=nu)
     else:
-        fit_result = fit_model.fit(spec/spec.max(), params, w=nu)
+        fit_result = fit_model.fit((spec/spec.max())**power_factor, params,
+                                   w=nu)
         report_fit(fit_result, show_correl=True, modelpars=params)
         fit_result.plot()
 
