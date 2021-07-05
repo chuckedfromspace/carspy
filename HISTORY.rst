@@ -2,6 +2,11 @@
 Change Log
 ==========
 
+0.6.0 (2021-07-05)
+------------------
+* Add a peak-finding function for calibrating the spectrometer based on Ar or Hg spectra.
+* Implement a fitting routine for the slit function based either on asymmetric Gaussian or Voigt profiles.
+
 0.5.0 (2021-05-17)
 ------------------
 
