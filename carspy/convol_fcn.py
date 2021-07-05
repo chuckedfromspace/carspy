@@ -154,14 +154,16 @@ def asym_Voigt(w, w0, sigma, k, a_sigma, a_k, sigma_L_l, sigma_L_h, offset,
     """
     response_low = np.exp(-abs((w-w0)/(sigma-a_sigma))**(k-a_k))
     response_high = np.exp(-abs((w-w0)/(sigma+a_sigma))**(k+a_k))
-    response_low = np.convolve(response_low, lorentz_line(w, w0, sigma_L_l),
+    response_low = np.convolve(response_low,
+                               lorentz_line(w, (w[0]+w[-1])/2, sigma_L_l),
                                'same')
-    response_high = np.convolve(response_high, lorentz_line(w, w0, sigma_L_h),
+    response_high = np.convolve(response_high,
+                                lorentz_line(w, (w[0]+w[-1])/2, sigma_L_h),
                                 'same')
-
+    response_low = response_low/response_low.max()
+    response_high = response_high/response_high.max()
     response = (np.append(response_low[np.where(w <= w0)],
                 response_high[np.where(w > w0)]) + offset)**power_factor
-
     return np.nan_to_num(response/response.max())
 
 
