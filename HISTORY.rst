@@ -2,8 +2,14 @@
 Change Log
 ==========
 
+0.6.1 (2021-07-07)
+------------------
+
+* Fix the discontinuity problem in the asymmetric Voigt profile
+
 0.6.0 (2021-07-05)
 ------------------
+
 * Add a peak-finding function for calibrating the spectrometer based on Ar or Hg spectra.
 * Implement a fitting routine for the slit function based either on asymmetric Gaussian or Voigt profiles.
 
