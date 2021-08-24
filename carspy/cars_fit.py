@@ -57,7 +57,8 @@ def bg_removal(spec, bg=None):
 @_ensureLmfit
 def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
              power_factor=1., eval_only=False,
-             save_fit=False, dir_save=None, file_name=None):
+             save_fit=False, dir_save=None, file_name=None,
+             **kwargs):
     r"""fitting the experimental slit function with a chosen lineshape
 
     .. attention::
@@ -89,6 +90,11 @@ def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
     file_name : str, optional
         If `save_fit` is true, specify the file name without file extension.
 
+    Other Parameters
+    ----------------
+    **kwargs:
+        Keyword arguments of the `Model.fit()` method from the module `lmfit`.
+
     Returns
     -------
     1d array
@@ -103,7 +109,7 @@ def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
         raise ValueError("Please choose between 'sGaussian' and 'sVoigt'")
     slit_func.__name__ = 'slit_func'
 
-    fit_model = Model(slit_func, independent_vars='w')
+    fit_model = Model(slit_func, independent_vars='w', )
 
     if init_params is None:
         init_params = (
@@ -123,14 +129,13 @@ def slit_fit(nu, spec, init_params=None, lineshape='sGaussian',
         return fit_model.eval(params, w=nu)
     else:
         fit_result = fit_model.fit((spec/spec.max())**power_factor, params,
-                                   w=nu)
+                                   w=nu, **kwargs)
         report_fit(fit_result, show_correl=True, modelpars=params)
         fit_result.plot()
 
-        if save_fit:
-            if dir_save and file_name:
-                path_write = Path(dir_save) / (file_name + '.pkl')
-                pkl_dump(path_write, fit_result)
+        if save_fit and dir_save and file_name:
+            path_write = Path(dir_save) / (file_name + '.pkl')
+            pkl_dump(path_write, fit_result)
 
 
 class CarsFit():
@@ -454,6 +459,12 @@ class CarsFit():
         show_fit : bool, optional
             If True, the fitting results will be reported and plotted. This is
             done via built-in functions in ``lmfit``.
+
+        Other Parameters
+        ----------------
+        **kwargs:
+            Keyword arguments of the `Model.fit()` method from the module
+            `lmfit`.
         """
         # general setup
         fit_model = Model(self.cars_expt_synth, independent_vars=['nu_expt'])
@@ -463,10 +474,7 @@ class CarsFit():
             if path_fit is None:
                 raise ValueError("Please provide path to a .pkl file "
                                  "containing the fitting result of a spectrum")
-            if self.fit_mode['chem_eq']:
-                x_mol_var = False
-            else:
-                x_mol_var = True
+            x_mol_var = not self.fit_mode['chem_eq']
             fit_params = pkl_load(path_fit).params
             initi_params = (('temperature', 2000, True, 250, 3000),
                             ('del_Tv', 0, False),
@@ -481,10 +489,9 @@ class CarsFit():
                             ('param5', fit_params['param5'], False),
                             ('param6', fit_params['param6'], False))
 
-        if self.fit_mode['fit'] == 'custom':
-            if add_params is None:
-                raise ValueError("Please specify fitting parameters first "
-                                 "using add_params")
+        if self.fit_mode['fit'] == 'custom' and add_params is None:
+            raise ValueError("Please specify fitting parameters first "
+                             "using add_params")
         params = fit_model.make_params()
         params.add_many(*initi_params)
         if add_params is not None:

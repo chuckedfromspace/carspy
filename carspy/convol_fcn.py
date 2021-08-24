@@ -23,10 +23,8 @@ def gaussian_line(w, w0, sigma):
     1d array of floats
         Intensities of the normalized Gaussian lineshape over w.
     """
-    _lineshape = 2/sigma*(np.log(2)/np.pi)**0.5*np.exp(
+    return 2/sigma*(np.log(2)/np.pi)**0.5*np.exp(
         -4*np.log(2)*((w-w0)/sigma)**2)
-
-    return _lineshape
 
 
 def lorentz_line(w, w0, sigma):
@@ -46,9 +44,7 @@ def lorentz_line(w, w0, sigma):
     1d array of floats
         Intensities of the normalized Lorentzian lineshape over w.
     """
-    _lineshape = 1/np.pi*(sigma/2)/((w-w0)**2+sigma**2/4)
-
-    return _lineshape
+    return 1/np.pi*(sigma/2)/((w-w0)**2+sigma**2/4)
 
 
 def voigt_line(w, w0, sigma_V, sigma_L):
