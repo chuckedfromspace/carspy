@@ -12,7 +12,7 @@ CARSpy
         :target: https://pypi.python.org/pypi/carspy
 
 .. image:: https://travis-ci.com/chuckedfromspace/carspy.svg
-        :target: https://travis-ci.com/chuckedfromspace/carspy
+        :target: https://app.travis-ci.com/chuckedfromspace/carspy.svg?branch=main
 
 .. image:: https://readthedocs.org/projects/carspy/badge/?version=latest
         :target: https://carspy.readthedocs.io/en/latest/?badge=latest
