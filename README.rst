@@ -11,8 +11,8 @@ CARSpy
 .. image:: https://img.shields.io/pypi/pyversions/carspy.svg
         :target: https://pypi.python.org/pypi/carspy
 
-.. image:: https://travis-ci.com/chuckedfromspace/carspy.svg
-        :target: https://app.travis-ci.com/chuckedfromspace/carspy.svg?branch=main
+.. image:: https://app.travis-ci.com/chuckedfromspace/carspy.svg?branch=main
+    :target: https://app.travis-ci.com/chuckedfromspace/carspy
 
 .. image:: https://readthedocs.org/projects/carspy/badge/?version=latest
         :target: https://carspy.readthedocs.io/en/latest/?badge=latest
